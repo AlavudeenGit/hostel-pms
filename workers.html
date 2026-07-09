@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Workers · Malabar Muslim Association Register</title>
+    <link rel="icon" type="image/png" href="asset/images/MMA_LOGO.png" />
+    <link rel="stylesheet" href="css/tokens.css" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+    <link rel="stylesheet" href="css/forms.css" />
+    <link rel="stylesheet" href="css/modal.css" />
+    <script>
+      (function () {
+        var t = localStorage.getItem("pms_theme");
+        if (t) document.documentElement.setAttribute("data-theme", t);
+      })();
+    </script>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar" id="sidebar"></aside>
+      <div class="main">
+        <header class="topbar" id="topbar"></header>
+        <main class="content">
+          <div class="page-head">
+            <div>
+              <div class="eyebrow">Manage</div>
+              <h1>Workers</h1>
+            </div>
+            <button class="btn btn-primary" id="add-worker-btn">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M12 5v14M5 12h14" />
+              </svg>
+              Add Worker
+            </button>
+          </div>
+
+          <div class="card card-pad" style="margin-bottom: var(--space-5)">
+            <div class="card-head">
+              <div>
+                <h3>Staff</h3>
+                <div class="card-sub">
+                  Cleaning, security, cooking &amp; more
+                </div>
+              </div>
+              <select class="tb-filter" id="filter-worker-status">
+                <option value="">All</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+            <div class="table-wrap">
+              <table class="reg-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Position</th>
+                    <th>Mobile</th>
+                    <th>Salary</th>
+                    <th>Joined</th>
+                    <th>Status</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="workers-tbody"></tbody>
+              </table>
+            </div>
+            <div id="workers-empty"></div>
+          </div>
+
+          <div class="card card-pad">
+            <div class="card-head">
+              <div>
+                <h3>This month's salary</h3>
+                <div class="card-sub" id="salary-month-label"></div>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table class="reg-table">
+                <thead>
+                  <tr>
+                    <th>Worker</th>
+                    <th>Base</th>
+                    <th>Overtime</th>
+                    <th>Bonus</th>
+                    <th>Advance</th>
+                    <th>Leave Ded.</th>
+                    <th>Final</th>
+                    <th>Status</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="salaries-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+    <script type="module" src="js/workers.js"></script>
+  </body>
+</html>

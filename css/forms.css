@@ -1,0 +1,389 @@
+/* ---------- Form fields (shared across all module pages) ---------- */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4) var(--space-5);
+  align-items: start;
+}
+.form-grid .span-2 {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 700px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .form-grid .span-2 {
+    grid-column: 1 / -1;
+  }
+}
+
+.f-field {
+  min-width: 0;
+}
+.f-field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+.f-field .req {
+  color: var(--ledger-red);
+  margin-left: 2px;
+}
+
+.f-field input[type="text"],
+.f-field input[type="number"],
+.f-field input[type="email"],
+.f-field input[type="date"],
+.f-field input[type="tel"],
+.f-field select,
+.f-field textarea {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border-radius: var(--radius-s);
+  border: 1px solid var(--line-strong);
+  background: var(--paper-raised);
+  color: var(--ink);
+  font-size: 13.5px;
+  line-height: 1.4;
+  font-family: var(--font-body);
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+.f-field select {
+  appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238892AC' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 15px;
+  padding-right: 32px;
+}
+.f-field select:hover {
+  border-color: var(--line-strong);
+}
+.f-field select:-moz-focusring {
+  color: transparent;
+  text-shadow: 0 0 0 var(--ink);
+}
+.f-field textarea {
+  resize: vertical;
+  min-height: 72px;
+}
+.f-field input:focus,
+.f-field select:focus,
+.f-field textarea:focus {
+  outline: none;
+  border-color: var(--brass);
+  box-shadow: 0 0 0 3px rgba(184, 145, 42, 0.15);
+}
+.f-field input:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+.f-field .hint {
+  font-size: 11px;
+  color: var(--ink-faint);
+  margin-top: 4px;
+}
+
+/* Toggle (Yes/No) */
+.f-toggle {
+  display: flex;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-s);
+  overflow: hidden;
+  width: fit-content;
+}
+.f-toggle button {
+  border: none;
+  background: var(--paper-raised);
+  color: var(--ink-faint);
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 8px 16px;
+  line-height: 1.2;
+}
+.f-toggle button.active {
+  background: var(--ink);
+  color: #fff;
+}
+[data-theme="dark"] .f-toggle button.active {
+  background: var(--brass);
+  color: var(--brass-ink);
+}
+
+/* File upload */
+.f-upload {
+  border: 1.5px dashed var(--line-strong);
+  border-radius: var(--radius-m);
+  padding: var(--space-4);
+  text-align: center;
+  color: var(--ink-faint);
+  font-size: 12.5px;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+  position: relative;
+}
+.f-upload:hover {
+  border-color: var(--brass);
+  background: var(--bg-soft);
+}
+.f-upload input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.f-upload .fname {
+  color: var(--ink);
+  font-weight: 500;
+  margin-top: 4px;
+  word-break: break-all;
+}
+.f-upload svg {
+  width: 20px;
+  height: 20px;
+  margin-bottom: 4px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--line);
+}
+
+/* ---------- Filter / toolbar row ---------- */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-4);
+}
+.toolbar .tb-search {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-m);
+  padding: 9px 12px;
+  flex: 1;
+  min-width: 200px;
+  line-height: 1;
+}
+.toolbar .tb-search input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 13px;
+  color: var(--ink);
+  width: 100%;
+  font-family: var(--font-body);
+  line-height: 1.3;
+  padding: 0;
+}
+.toolbar .tb-search svg {
+  width: 15px;
+  height: 15px;
+  color: var(--ink-faint);
+  flex-shrink: 0;
+  display: block;
+}
+
+.toolbar select.tb-filter {
+  display: block;
+  box-sizing: border-box;
+  padding: 9px 30px 9px 12px;
+  border-radius: var(--radius-m);
+  border: 1px solid var(--line);
+  background: var(--paper-raised);
+  color: var(--ink-soft);
+  font-size: 12.5px;
+  line-height: 1.3;
+  font-family: var(--font-body);
+  cursor: pointer;
+  appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238892AC' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 13px;
+  transition: border-color 0.15s;
+}
+.toolbar select.tb-filter:hover {
+  border-color: var(--line-strong);
+}
+.toolbar select.tb-filter:focus {
+  outline: none;
+  border-color: var(--brass);
+  box-shadow: 0 0 0 3px rgba(184, 145, 42, 0.15);
+}
+.toolbar select.tb-filter:-moz-focusring {
+  color: transparent;
+  text-shadow: 0 0 0 var(--ink-soft);
+}
+
+@media (max-width: 640px) {
+  .toolbar .tb-search {
+    flex-basis: 100%;
+  }
+  .toolbar select.tb-filter {
+    flex: 1 1 auto;
+    min-width: 120px;
+  }
+}
+
+/* Compact variant used for inline status dropdowns inside table rows
+   (e.g. room/worker status) — same visual language, smaller footprint. */
+select.tb-filter-sm {
+  display: inline-block;
+  box-sizing: border-box;
+  padding: 5px 26px 5px 10px;
+  border-radius: var(--radius-s);
+  border: 1px solid var(--line);
+  background-color: var(--paper-raised);
+  color: var(--ink-soft);
+  font-size: 11.5px;
+  font-family: var(--font-body);
+  cursor: pointer;
+  appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238892AC' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 7px center;
+  background-size: 12px;
+  transition: border-color 0.15s;
+}
+select.tb-filter-sm:hover {
+  border-color: var(--line-strong);
+}
+select.tb-filter-sm:focus {
+  outline: none;
+  border-color: var(--brass);
+  box-shadow: 0 0 0 3px rgba(184, 145, 42, 0.15);
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: var(--space-4);
+  flex-wrap: wrap;
+}
+.tab-btn {
+  border: none;
+  background: transparent;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-faint);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  line-height: 1.3;
+}
+.tab-btn.active {
+  color: var(--ink);
+  border-bottom-color: var(--brass);
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--space-4);
+  font-size: 12px;
+  color: var(--ink-faint);
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+.pagination .pg-btns {
+  display: flex;
+  gap: 6px;
+}
+.pagination button {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-s);
+  border: 1px solid var(--line);
+  background: var(--paper-raised);
+  color: var(--ink-soft);
+  font-size: 12px;
+}
+.pagination button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.pagination button.active {
+  background: var(--ink);
+  color: #fff;
+  border-color: var(--ink);
+}
+
+.empty-state {
+  text-align: center;
+  padding: var(--space-7) var(--space-4);
+  color: var(--ink-faint);
+}
+.empty-state svg {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto var(--space-3);
+  opacity: 0.5;
+  display: block;
+}
+.empty-state .et-title {
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+/* Inline editable amount inputs inside table cells (e.g. Mess charge
+   in the Payments table) — compact, right-aligned, blends into the row
+   until focused. */
+.mess-inline-input {
+  width: 90px;
+  box-sizing: border-box;
+  padding: 6px 8px;
+  border-radius: var(--radius-s);
+  border: 1px solid var(--line);
+  background: var(--paper-raised);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  text-align: right;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+.mess-inline-input:hover {
+  border-color: var(--line-strong);
+}
+.mess-inline-input:focus {
+  outline: none;
+  border-color: var(--brass);
+  box-shadow: 0 0 0 3px rgba(184, 145, 42, 0.15);
+}
+.mess-inline-input:disabled {
+  opacity: 0.5;
+}

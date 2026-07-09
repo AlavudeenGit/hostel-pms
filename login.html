@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign in · Malabar Muslim Association Register</title>
+    <link rel="icon" type="image/png" href="asset/images/MMA_LOGO.png" />
+    <link rel="stylesheet" href="css/tokens.css" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/login.css" />
+    <script>
+      (function () {
+        var t = localStorage.getItem("pms_theme");
+        if (t) document.documentElement.setAttribute("data-theme", t);
+      })();
+    </script>
+  </head>
+  <body>
+    <div class="login-wrap">
+      <div class="login-side">
+        <img
+          src="asset/images/MMA_LOGO.png"
+          alt="MMA Logo"
+          class="brand-mark-lg"
+        />
+
+        <div class="pitch">
+          <h1>Every room, every rent, every record — in one register.</h1>
+          <p>
+            Malabar Muslim Association's front desk, digitized. Track occupancy,
+            collect rent, pay staff, and keep every document on hand — without a
+            single spreadsheet.
+          </p>
+          <div class="login-rack" aria-hidden="true">
+            <div class="lk"></div>
+            <div class="lk"></div>
+            <div class="lk"></div>
+            <div class="lk"></div>
+          </div>
+        </div>
+
+        <div class="foot-note">
+          Single admin access · No student or worker login
+        </div>
+      </div>
+
+      <div class="login-main">
+        <div class="login-form-card">
+          <div class="eyebrow">Admin access</div>
+          <h2>Sign in to the register</h2>
+
+          <div class="login-error" id="login-error"></div>
+
+          <form id="login-form">
+            <div class="field">
+              <label for="login-email">Email</label>
+              <input
+                type="email"
+                id="login-email"
+                placeholder="admin@mma.in"
+                autocomplete="username"
+                required
+              />
+            </div>
+            <div class="field">
+              <label for="login-password">Password</label>
+              <input
+                type="password"
+                id="login-password"
+                placeholder="••••••••"
+                autocomplete="current-password"
+                required
+              />
+            </div>
+            <div class="login-row-between">
+              <span></span>
+              <a href="#" class="forgot-link">Forgot password?</a>
+            </div>
+            <button
+              class="btn btn-primary btn-block"
+              id="login-submit"
+              type="submit"
+            >
+              Sign in
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import { initLoginPage } from "./js/auth.js";
+      initLoginPage();
+    </script>
+  </body>
+</html>

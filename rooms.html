@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rooms · Malabar Muslim Association Register</title>
+    <link rel="icon" type="image/png" href="asset/images/MMA_LOGO.png" />
+    <link rel="stylesheet" href="css/tokens.css" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+    <link rel="stylesheet" href="css/forms.css" />
+    <link rel="stylesheet" href="css/modal.css" />
+    <script>
+      (function () {
+        var t = localStorage.getItem("pms_theme");
+        if (t) document.documentElement.setAttribute("data-theme", t);
+      })();
+    </script>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar" id="sidebar"></aside>
+      <div class="main">
+        <header class="topbar" id="topbar"></header>
+        <main class="content">
+          <div class="page-head">
+            <div>
+              <div class="eyebrow">Manage</div>
+              <h1>Rooms</h1>
+            </div>
+            <button class="btn btn-primary" id="add-room-btn">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M12 5v14M5 12h14" />
+              </svg>
+              Add Room
+            </button>
+          </div>
+
+          <div
+            class="grid-cards"
+            id="room-stats"
+            style="margin-bottom: var(--space-5)"
+          ></div>
+
+          <div class="card card-pad">
+            <div class="toolbar">
+              <div class="tb-search">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                >
+                  <circle cx="11" cy="11" r="7" />
+                  <path d="m21 21-3.8-3.8" />
+                </svg>
+                <input
+                  type="text"
+                  id="room-search"
+                  placeholder="Search room number…"
+                />
+              </div>
+              <select class="tb-filter" id="filter-floor">
+                <option value="">All floors</option>
+              </select>
+              <select class="tb-filter" id="filter-type">
+                <option value="">All types</option>
+                <option value="2">2-Sharing</option>
+                <option value="3">3-Sharing</option>
+              </select>
+              <select class="tb-filter" id="filter-status">
+                <option value="">All statuses</option>
+                <option value="available">Available</option>
+                <option value="full">Full</option>
+                <option value="maintenance">Maintenance</option>
+              </select>
+            </div>
+            <div class="table-wrap">
+              <table class="reg-table">
+                <thead>
+                  <tr>
+                    <th>Floor</th>
+                    <th>Room</th>
+                    <th>Type</th>
+                    <th>Capacity</th>
+                    <th>Occupied</th>
+                    <th>Available</th>
+                    <th>Status</th>
+                    <th>Residents</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="rooms-tbody"></tbody>
+              </table>
+            </div>
+            <div id="rooms-empty"></div>
+          </div>
+        </main>
+      </div>
+    </div>
+    <script type="module" src="js/rooms.js"></script>
+  </body>
+</html>

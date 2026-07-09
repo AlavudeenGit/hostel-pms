@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payments · Malabar Muslim Association Register</title>
+    <link rel="icon" type="image/png" href="asset/images/MMA_LOGO.png" />
+    <link rel="stylesheet" href="css/tokens.css" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+    <link rel="stylesheet" href="css/forms.css" />
+    <link rel="stylesheet" href="css/modal.css" />
+    <script>
+      (function () {
+        var t = localStorage.getItem("pms_theme");
+        if (t) document.documentElement.setAttribute("data-theme", t);
+      })();
+    </script>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar" id="sidebar"></aside>
+      <div class="main">
+        <header class="topbar" id="topbar"></header>
+        <main class="content">
+          <div class="page-head">
+            <div>
+              <div class="eyebrow">Manage</div>
+              <h1>Payments</h1>
+            </div>
+            <button class="btn btn-brass" id="generate-btn">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M12 5v14M5 12h14" />
+              </svg>
+              Generate this month's payments
+            </button>
+          </div>
+
+          <div
+            class="grid-cards"
+            id="payment-stats"
+            style="margin-bottom: var(--space-5)"
+          ></div>
+
+          <div class="card card-pad">
+            <div class="tabs">
+              <button class="tab-btn active" data-tab="all">All</button>
+              <button class="tab-btn" data-tab="pending">
+                Pending &amp; Partial
+              </button>
+            </div>
+            <div class="toolbar">
+              <div class="tb-search">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                >
+                  <circle cx="11" cy="11" r="7" />
+                  <path d="m21 21-3.8-3.8" />
+                </svg>
+                <input
+                  type="text"
+                  id="p-search"
+                  placeholder="Search student, room…"
+                />
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table class="reg-table">
+                <thead>
+                  <tr>
+                    <th>Student</th>
+                    <th>Room</th>
+                    <th>Rent</th>
+                    <th>Bike</th>
+                    <th>Mess</th>
+                    <th>Total</th>
+                    <th>Paid</th>
+                    <th>Balance</th>
+                    <th>Status</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="payments-tbody"></tbody>
+              </table>
+            </div>
+            <div id="payments-empty"></div>
+          </div>
+        </main>
+      </div>
+    </div>
+    <script type="module" src="js/payments.js"></script>
+  </body>
+</html>

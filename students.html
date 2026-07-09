@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Students &amp; Employees · Malabar Muslim Association Register
+    </title>
+    <link rel="icon" type="image/png" href="asset/images/MMA_LOGO.png" />
+    <link rel="stylesheet" href="css/tokens.css" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+    <link rel="stylesheet" href="css/forms.css" />
+    <link rel="stylesheet" href="css/modal.css" />
+    <script>
+      (function () {
+        var t = localStorage.getItem("pms_theme");
+        if (t) document.documentElement.setAttribute("data-theme", t);
+      })();
+    </script>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar" id="sidebar"></aside>
+      <div class="main">
+        <header class="topbar" id="topbar"></header>
+        <main class="content">
+          <div class="page-head">
+            <div>
+              <div class="eyebrow">Manage</div>
+              <h1>Students &amp; Employees</h1>
+            </div>
+            <button class="btn btn-primary" id="add-student-btn">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M12 5v14M5 12h14" />
+              </svg>
+              Add Student
+            </button>
+          </div>
+
+          <div class="card card-pad">
+            <div class="tabs">
+              <button class="tab-btn active" data-tab="active">Active</button>
+              <button class="tab-btn" data-tab="vacated">Vacated</button>
+            </div>
+
+            <div class="toolbar">
+              <div class="tb-search">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                >
+                  <circle cx="11" cy="11" r="7" />
+                  <path d="m21 21-3.8-3.8" />
+                </svg>
+                <input
+                  type="text"
+                  id="s-search"
+                  placeholder="Search name, room, mobile, Aadhar…"
+                />
+              </div>
+              <select class="tb-filter" id="filter-persontype">
+                <option value="">Student &amp; Employee</option>
+                <option value="student">Student</option>
+                <option value="employee">Employee</option>
+              </select>
+              <select class="tb-filter" id="filter-bike">
+                <option value="">Bike: Any</option>
+                <option value="yes">Bike: Yes</option>
+                <option value="no">Bike: No</option>
+              </select>
+              <select class="tb-filter" id="filter-mess">
+                <option value="">Mess: Any</option>
+                <option value="yes">Mess: Yes</option>
+                <option value="no">Mess: No</option>
+              </select>
+              <select class="tb-filter" id="filter-sharing">
+                <option value="">Any sharing</option>
+                <option value="2">2-Sharing</option>
+                <option value="3">3-Sharing</option>
+              </select>
+            </div>
+
+            <div class="table-wrap">
+              <table class="reg-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Room</th>
+                    <th>Sharing</th>
+                    <th>Mobile</th>
+                    <th>Mess</th>
+                    <th>Bike</th>
+                    <th>Joined</th>
+                    <th>Status</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="students-tbody"></tbody>
+              </table>
+            </div>
+            <div id="students-empty"></div>
+          </div>
+        </main>
+      </div>
+    </div>
+    <script type="module" src="js/students.js"></script>
+  </body>
+</html>

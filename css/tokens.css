@@ -1,0 +1,98 @@
+/* ============================================================
+   DESIGN TOKENS — Hostel/PG Register
+   Concept: the digital twin of a reception desk ledger + key rack.
+   Ink navy, brass hardware, ledger-red for dues, ledger-green for paid.
+   ============================================================ */
+
+:root {
+  /* ---- Color: Light (paper / daylight desk) ---- */
+  --bg: #eef1f6;
+  --bg-soft: #e4e9f1;
+  --paper: #fbf9f4;
+  --paper-raised: #ffffff;
+  --ink: #16213e;
+  --ink-soft: #4c5878;
+  --ink-faint: #8892ac;
+  --line: rgba(22, 33, 62, 0.12);
+  --line-strong: rgba(22, 33, 62, 0.22);
+
+  --brass: #b8912a;
+  --brass-soft: #e3c877;
+  --brass-ink: #6e5310;
+
+  --ledger-red: #a83a2e;
+  --ledger-red-bg: rgba(168, 58, 46, 0.09);
+  --ledger-green: #2f6b54;
+  --ledger-green-bg: rgba(47, 107, 84, 0.1);
+  --ledger-amber: #a6791e;
+  --ledger-amber-bg: rgba(166, 121, 30, 0.1);
+  --ledger-blue: #2a4e7a;
+  --ledger-blue-bg: rgba(42, 78, 122, 0.09);
+
+  --shadow-card:
+    0 1px 2px rgba(22, 33, 62, 0.04), 0 6px 20px -8px rgba(22, 33, 62, 0.12);
+  --shadow-raised:
+    0 2px 4px rgba(22, 33, 62, 0.06), 0 14px 32px -12px rgba(22, 33, 62, 0.18);
+
+  /* ---- Type ---- */
+  --font-display: "IBM Plex Serif", Georgia, serif;
+  --font-body: "IBM Plex Sans", -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", "SF Mono", monospace;
+
+  /* ---- Layout ---- */
+  --sidebar-w: 248px;
+  --topbar-h: 68px;
+  --radius-s: 6px;
+  --radius-m: 10px;
+  --radius-l: 16px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-theme="dark"] {
+  --bg: #0e1526;
+  --bg-soft: #131c33;
+  --paper: #161f38;
+  --paper-raised: #1b2540;
+  --ink: #e9ecf5;
+  --ink-soft: #a9b2cc;
+  --ink-faint: #6b7594;
+  --line: rgba(233, 236, 245, 0.09);
+  --line-strong: rgba(233, 236, 245, 0.16);
+
+  --brass: #e3c877;
+  --brass-soft: #f0dda0;
+  --brass-ink: #2a2107;
+
+  --ledger-red: #e27a6b;
+  --ledger-red-bg: rgba(226, 122, 107, 0.12);
+  --ledger-green: #6fcba6;
+  --ledger-green-bg: rgba(111, 203, 166, 0.12);
+  --ledger-amber: #e0b65c;
+  --ledger-amber-bg: rgba(224, 182, 92, 0.12);
+  --ledger-blue: #7fa8da;
+  --ledger-blue-bg: rgba(127, 168, 218, 0.12);
+
+  --shadow-card:
+    0 1px 2px rgba(0, 0, 0, 0.2), 0 6px 20px -8px rgba(0, 0, 0, 0.45);
+  --shadow-raised:
+    0 2px 4px rgba(0, 0, 0, 0.25), 0 14px 32px -12px rgba(0, 0, 0, 0.55);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

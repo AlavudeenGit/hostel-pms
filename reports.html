@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reports · Malabar Muslim Association Register</title>
+    <link rel="icon" type="image/png" href="asset/images/MMA_LOGO.png" />
+    <link rel="stylesheet" href="css/tokens.css" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+    <link rel="stylesheet" href="css/forms.css" />
+    <link rel="stylesheet" href="css/modal.css" />
+    <style>
+      .reports-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-4);
+      }
+      @media (max-width: 1180px) {
+        .reports-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media (max-width: 700px) {
+        .reports-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .report-card {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+      }
+      .report-card .r-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--brass-soft);
+        color: var(--brass-ink);
+      }
+      .report-card .r-icon svg {
+        width: 17px;
+        height: 17px;
+      }
+      .report-card .r-title {
+        font-family: var(--font-display);
+        font-size: 15px;
+        font-weight: 600;
+      }
+      .report-card .r-desc {
+        font-size: 12px;
+        color: var(--ink-faint);
+        flex: 1;
+      }
+      .report-card .r-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+    </style>
+    <script>
+      (function () {
+        var t = localStorage.getItem("pms_theme");
+        if (t) document.documentElement.setAttribute("data-theme", t);
+      })();
+    </script>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar" id="sidebar"></aside>
+      <div class="main">
+        <header class="topbar" id="topbar"></header>
+        <main class="content">
+          <div class="page-head">
+            <div>
+              <div class="eyebrow">Insights</div>
+              <h1>Reports</h1>
+            </div>
+            <div class="date mono" id="report-generated"></div>
+          </div>
+          <div class="reports-grid" id="reports-grid"></div>
+        </main>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
+    <script type="module" src="js/reports.js"></script>
+  </body>
+</html>

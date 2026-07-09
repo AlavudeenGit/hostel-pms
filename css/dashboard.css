@@ -1,0 +1,255 @@
+/* ---------- Charts panel ---------- */
+.chart-card canvas {
+  max-height: 260px;
+}
+
+.chart-tabs {
+  display: flex;
+  gap: var(--space-2);
+}
+.chart-tab {
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 20px;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--ink-faint);
+}
+.chart-tab.active {
+  background: var(--ink);
+  color: #fff;
+  border-color: var(--ink);
+}
+[data-theme="dark"] .chart-tab.active {
+  background: var(--brass);
+  color: var(--brass-ink);
+  border-color: var(--brass);
+}
+
+/* ============================================================
+   SIGNATURE ELEMENT — The Key Rack
+   A literal reception-desk key rack: every room is a tag hanging
+   from a rail. Color = status. A glance tells the warden what a
+   glance at the real board would.
+   ============================================================ */
+.rack-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.rack-rail {
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(180deg, var(--brass-soft), var(--brass));
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15) inset;
+  margin-bottom: 2px;
+}
+
+.rack-floor-label {
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  font-weight: 600;
+  margin: var(--space-4) 0 var(--space-3);
+}
+.rack-floor-label:first-of-type {
+  margin-top: var(--space-2);
+}
+
+.rack-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-3);
+  padding-top: 6px;
+}
+
+.key-tag {
+  --tag-color: var(--ledger-green);
+  width: 68px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transform-origin: top center;
+  transition: transform 0.35s var(--ease-out);
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: var(--font-body);
+}
+.key-tag:hover {
+  transform: rotate(-4deg) translateY(1px);
+}
+.key-tag:focus-visible {
+  outline-offset: 4px;
+}
+
+.key-tag .hook {
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--ink-faint);
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  margin-bottom: -1px;
+  opacity: 0.6;
+}
+
+.key-tag .tag-body {
+  width: 100%;
+  background: var(--tag-color);
+  border-radius: var(--radius-s) var(--radius-s) 10px 10px;
+  padding: 8px 4px 10px;
+  text-align: center;
+  box-shadow: 0 3px 8px -2px rgba(0, 0, 0, 0.25);
+  position: relative;
+}
+.key-tag .tag-body::after {
+  content: "";
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.55);
+}
+.key-tag .room-no {
+  display: block;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 13px;
+  color: #fff;
+  margin-top: 6px;
+}
+.key-tag .occ {
+  display: block;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.85);
+  font-family: var(--font-mono);
+  margin-top: 1px;
+}
+
+.key-tag.status-available {
+  --tag-color: var(--ledger-green);
+}
+.key-tag.status-full {
+  --tag-color: var(--ledger-blue);
+}
+.key-tag.status-maintenance {
+  --tag-color: var(--ink-faint);
+}
+.key-tag.status-maintenance .tag-body {
+  opacity: 0.7;
+}
+
+.rack-legend {
+  display: flex;
+  gap: var(--space-4);
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.rack-legend .leg-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: var(--ink-soft);
+}
+.rack-legend .leg-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+}
+.rack-legend .leg-dot.available {
+  background: var(--ledger-green);
+}
+.rack-legend .leg-dot.full {
+  background: var(--ledger-blue);
+}
+.rack-legend .leg-dot.maintenance {
+  background: var(--ink-faint);
+}
+
+/* Room tooltip popover */
+.key-tooltip {
+  position: absolute;
+  background: var(--ink);
+  color: #fff;
+  font-size: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius-m);
+  box-shadow: var(--shadow-raised);
+  z-index: 50;
+  width: 190px;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(4px);
+  transition:
+    opacity 0.15s,
+    transform 0.15s;
+}
+.key-tooltip.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+.key-tooltip .kt-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+  font-family: var(--font-mono);
+}
+.key-tooltip .kt-row {
+  display: flex;
+  justify-content: space-between;
+  color: #b7c0da;
+  font-size: 11.5px;
+  padding: 1px 0;
+}
+
+/* ---------- Recent activity list ---------- */
+.activity-list {
+  display: flex;
+  flex-direction: column;
+}
+.activity-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+.activity-row:last-child {
+  border-bottom: none;
+}
+.activity-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.activity-icon svg {
+  width: 14px;
+  height: 14px;
+}
+.activity-text {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  flex: 1;
+}
+.activity-text b {
+  color: var(--ink);
+  font-weight: 600;
+}
+.activity-time {
+  font-size: 11px;
+  color: var(--ink-faint);
+  font-family: var(--font-mono);
+  white-space: nowrap;
+}
