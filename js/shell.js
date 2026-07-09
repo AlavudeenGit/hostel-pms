@@ -77,11 +77,11 @@ export function renderShell(
 
   sidebar.innerHTML = `
     <div class="brand">
-      <svg class="brand-mark" viewBox="0 0 34 34" fill="none">
-        <rect width="34" height="34" rx="8" fill="#B8912A"/>
-        <path d="M10 22V13.5L17 9l7 4.5V22" stroke="#16213E" stroke-width="1.8" stroke-linejoin="round"/>
-        <path d="M14 22v-6h6v6" stroke="#16213E" stroke-width="1.8"/>
-      </svg>
+       <img
+          src="asset/images/MMA_LOGO.png"
+          alt="MMA Logo"
+          class="brand-mark-lg"
+        />
       <div class="brand-text">
         <div class="name">Malabar Muslim Association</div>
         <div class="sub">Register &amp; Ledger</div>

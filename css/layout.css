@@ -54,6 +54,12 @@
   color: #6b7594;
   padding: var(--space-4) var(--space-5) var(--space-2);
 }
+.brand-mark-lg {
+  width: 30%;
+  height: 70%;
+  object-fit: contain;
+  display: block;
+}
 
 .nav {
   display: flex;
