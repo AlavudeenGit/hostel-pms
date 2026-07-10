@@ -58,7 +58,7 @@ function renderTable() {
     if (q) {
       const room = s.rooms ? String(s.rooms.room_number) : "";
       const hay =
-        `${s.name} ${s.mobile} ${s.aadhar_number} ${room}`.toLowerCase();
+        `${s.name} ${s.mobile} ${s.aadhar_number || ""} ${s.admission_number || ""} ${room}`.toLowerCase();
       if (!hay.includes(q)) return false;
     }
     return true;
@@ -139,7 +139,7 @@ async function openStudentFormModal(existing = null) {
     title: isEdit ? `Edit — ${existing.name}` : "Add student / employee",
     sub: isEdit
       ? "Update any field. Documents are optional — leave blank to keep the current file."
-      : undefined,
+      : "Only Name, Mobile, and Room are required — everything else can be filled in later.",
     wide: true,
     bodyHTML: `
       <form id="student-form">
@@ -150,44 +150,60 @@ async function openStudentFormModal(existing = null) {
           <div class="f-field"><label>Alternative Mobile</label><input type="tel" id="f-alt-mobile" value="${v("alt_mobile")}" /></div>
 
           <div class="f-field"><label>Email</label><input type="email" id="f-email" value="${v("email")}" /></div>
-          <div class="f-field"><label>Student / Employee <span class="req">*</span></label>
-            <select id="f-type" required>
+          <div class="f-field"><label>Student / Employee</label>
+            <select id="f-type">
               <option value="student" ${v("type") === "student" ? "selected" : ""}>Student</option>
               <option value="employee" ${v("type") === "employee" ? "selected" : ""}>Employee</option>
             </select></div>
 
           <div class="f-field"><label>Room <span class="req">*</span></label>
             <select id="f-room" required><option value="">Select a room</option>${roomOptions}</select></div>
-          <div class="f-field"><label>Joining Date <span class="req">*</span></label>
-            <input type="date" id="f-joining" value="${v("joining_date", todayISO())}" required /></div>
+          <div class="f-field"><label>Joining Date</label>
+            <input type="date" id="f-joining" value="${v("joining_date", todayISO())}" /></div>
 
-          <div class="f-field"><label>Mess Available <span class="req">*</span></label>
+          <div class="f-field"><label>Admission Number</label><input type="text" id="f-admission-no" value="${v("admission_number")}" /></div>
+          <div class="f-field"><label>Blood Group</label><input type="text" id="f-blood-group" value="${v("blood_group")}" placeholder="e.g. O+" /></div>
+
+          <div class="f-field"><label>Category</label>
+            <select id="f-category">
+              <option value="" ${v("category") === "" ? "selected" : ""}>Select category</option>
+              <option value="TN" ${v("category") === "TN" ? "selected" : ""}>TN</option>
+              <option value="KL" ${v("category") === "KL" ? "selected" : ""}>KL</option>
+              <option value="NM" ${v("category") === "NM" ? "selected" : ""}>NM</option>
+            </select></div>
+          <div class="f-field"></div>
+
+          <div class="f-field"><label>Caution Deposit (₹)</label><input type="number" id="f-caution-deposit" min="0" value="${isEdit ? (existing.caution_deposit ?? "") : ""}" /></div>
+          <div class="f-field"><label>Mess Deposit (₹)</label><input type="number" id="f-mess-deposit" min="0" value="${isEdit ? (existing.mess_deposit ?? "") : ""}" /></div>
+
+          <div class="f-field"><label>Mess Available</label>
             <div class="f-toggle" data-toggle="mess"><button type="button" data-val="true" class="${checked("mess_available") ? "active" : ""}">Yes</button><button type="button" data-val="false" class="${checked("mess_available") ? "" : "active"}">No</button></div></div>
           <div class="f-field"><label>Mess Charge (₹ / month)</label>
             <input type="number" id="f-mess-charge" min="0" value="${isEdit ? (existing.mess_charge ?? "") : ""}" placeholder="Default: ₹${defaultMess}" />
             <div class="hint">Independent per student — editable any time, doesn't affect anyone else.</div></div>
-          <div class="f-field"><label>Bike Available <span class="req">*</span></label>
+          <div class="f-field"><label>Bike Available</label>
             <div class="f-toggle" data-toggle="bike"><button type="button" data-val="true" class="${checked("bike_available") ? "active" : ""}">Yes</button><button type="button" data-val="false" class="${checked("bike_available") ? "" : "active"}">No</button></div></div>
+          <div class="f-field"></div>
 
           <div class="f-field span-2"><label>Photo</label>
             <div class="f-upload"><input type="file" id="f-photo" accept="image/*" /><div>${isEdit ? "Click to replace photo" : "Click or drop a photo"}</div><div class="fname" id="f-photo-name"></div></div></div>
 
-          <div class="f-field"><label>Aadhar Number <span class="req">*</span></label><input type="text" id="f-aadhar" value="${v("aadhar_number")}" required /></div>
+          <div class="f-field"><label>Aadhar Number</label><input type="text" id="f-aadhar" value="${v("aadhar_number")}" /></div>
           <div class="f-field"><label>Driving License Number</label><input type="text" id="f-license-no" value="${v("license_number")}" /></div>
 
-          <div class="f-field"><label>Aadhar Front Image ${isEdit ? "" : '<span class="req">*</span>'}</label>
-            <div class="f-upload"><input type="file" id="f-aadhar-front" accept="image/*" ${isEdit ? "" : "required"} /><div>${isEdit ? "Replace front (optional)" : "Upload front"}</div><div class="fname" id="f-aadhar-front-name"></div></div></div>
-          <div class="f-field"><label>Aadhar Back Image ${isEdit ? "" : '<span class="req">*</span>'}</label>
-            <div class="f-upload"><input type="file" id="f-aadhar-back" accept="image/*" ${isEdit ? "" : "required"} /><div>${isEdit ? "Replace back (optional)" : "Upload back"}</div><div class="fname" id="f-aadhar-back-name"></div></div></div>
+          <div class="f-field"><label>Aadhar Front Image</label>
+            <div class="f-upload"><input type="file" id="f-aadhar-front" accept="image/*" /><div>${isEdit ? "Replace front (optional)" : "Upload front (optional)"}</div><div class="fname" id="f-aadhar-front-name"></div></div></div>
+          <div class="f-field"><label>Aadhar Back Image</label>
+            <div class="f-upload"><input type="file" id="f-aadhar-back" accept="image/*" /><div>${isEdit ? "Replace back (optional)" : "Upload back (optional)"}</div><div class="fname" id="f-aadhar-back-name"></div></div></div>
 
           <div class="f-field span-2"><label>Driving License Image</label>
             <div class="f-upload"><input type="file" id="f-license-img" accept="image/*" /><div>Upload license (optional)</div><div class="fname" id="f-license-img-name"></div></div></div>
 
-          <div class="f-field span-2"><label>Permanent Address <span class="req">*</span></label><textarea id="f-perm-addr" required>${v("permanent_address")}</textarea></div>
-          <div class="f-field span-2"><label>Current Address <span class="req">*</span></label><textarea id="f-cur-addr" required>${v("current_address")}</textarea></div>
+          <div class="f-field span-2"><label>Permanent Address</label><textarea id="f-perm-addr">${v("permanent_address")}</textarea></div>
+          <div class="f-field span-2"><label>Current Address</label><textarea id="f-cur-addr">${v("current_address")}</textarea></div>
 
-          <div class="f-field"><label>Guardian Name <span class="req">*</span></label><input type="text" id="f-guardian" value="${v("guardian_name")}" required /></div>
-          <div class="f-field"><label>Guardian Mobile <span class="req">*</span></label><input type="tel" id="f-guardian-mobile" value="${v("guardian_mobile")}" required /></div>
+          <div class="f-field"><label>Guardian Name</label><input type="text" id="f-guardian" value="${v("guardian_name")}" /></div>
+          <div class="f-field"><label>Guardian Mobile</label><input type="tel" id="f-guardian-mobile" value="${v("guardian_mobile")}" /></div>
 
           <div class="f-field span-2"><label>Remarks</label><textarea id="f-remarks">${v("remarks")}</textarea></div>
         </div>
@@ -213,21 +229,10 @@ async function openStudentFormModal(existing = null) {
   });
 
   el.querySelector("#student-save").addEventListener("click", async () => {
-    const required = [
-      "#f-name",
-      "#f-mobile",
-      "#f-type",
-      "#f-room",
-      "#f-joining",
-      "#f-aadhar",
-      "#f-perm-addr",
-      "#f-cur-addr",
-      "#f-guardian",
-      "#f-guardian-mobile",
-    ];
+    const required = ["#f-name", "#f-mobile", "#f-room"];
     for (const sel of required) {
       if (!qs(sel, el).value.trim()) {
-        toast("Please fill all required fields.", "error");
+        toast("Name, Mobile Number, and Room are required.", "error");
         return;
       }
     }
@@ -266,6 +271,17 @@ async function openStudentFormModal(existing = null) {
         type: qs("#f-type", el).value,
         room_id: room.id,
         sharing_type: room.room_type,
+        admission_number: qs("#f-admission-no", el).value.trim(),
+        blood_group: qs("#f-blood-group", el).value.trim(),
+        category: qs("#f-category", el).value || null,
+        caution_deposit:
+          qs("#f-caution-deposit", el).value.trim() !== ""
+            ? Number(qs("#f-caution-deposit", el).value)
+            : 0,
+        mess_deposit:
+          qs("#f-mess-deposit", el).value.trim() !== ""
+            ? Number(qs("#f-mess-deposit", el).value)
+            : 0,
         mess_available:
           qs('[data-toggle="mess"] .active', el).dataset.val === "true",
         mess_charge:
@@ -284,7 +300,7 @@ async function openStudentFormModal(existing = null) {
         current_address: qs("#f-cur-addr", el).value.trim(),
         guardian_name: qs("#f-guardian", el).value.trim(),
         guardian_mobile: qs("#f-guardian-mobile", el).value.trim(),
-        joining_date: qs("#f-joining", el).value,
+        joining_date: qs("#f-joining", el).value || todayISO(),
         remarks: qs("#f-remarks", el).value.trim(),
       };
 
@@ -348,24 +364,34 @@ async function openProfile(id) {
           <div><div class="k">Mobile</div><div class="v mono">${s.mobile}</div></div>
           <div><div class="k">Alt. Mobile</div><div class="v mono">${s.alt_mobile || "—"}</div></div>
           <div><div class="k">Email</div><div class="v">${s.email || "—"}</div></div>
-          <div><div class="k">Aadhar</div><div class="v mono">${s.aadhar_number}</div></div>
+          <div><div class="k">Aadhar</div><div class="v mono">${s.aadhar_number || "—"}</div></div>
           <div><div class="k">Joined</div><div class="v">${formatDate(s.joining_date)}</div></div>
           ${s.status === "vacated" ? `<div><div class="k">Vacated</div><div class="v">${formatDate(s.vacated_date)}</div></div>` : ""}
+        </div>
+      </div>
+      <div class="so-section">
+        <h4>Admission &amp; category</h4>
+        <div class="so-kv">
+          <div><div class="k">Admission No.</div><div class="v mono">${s.admission_number || "—"}</div></div>
+          <div><div class="k">Blood Group</div><div class="v">${s.blood_group || "—"}</div></div>
+          <div><div class="k">Category</div><div class="v">${s.category || "—"}</div></div>
+          <div><div class="k">Caution Deposit</div><div class="v num">${formatINR(s.caution_deposit || 0)}</div></div>
+          <div><div class="k">Mess Deposit</div><div class="v num">${formatINR(s.mess_deposit || 0)}</div></div>
         </div>
       </div>
       ${s.status === "vacated" ? `<div class="so-section"><h4>Vacate reason</h4><p style="font-size:13px; color:var(--ink-soft);">${s.vacated_reason || "—"}</p></div>` : ""}
       <div class="so-section">
         <h4>Guardian</h4>
         <div class="so-kv">
-          <div><div class="k">Name</div><div class="v">${s.guardian_name}</div></div>
-          <div><div class="k">Mobile</div><div class="v mono">${s.guardian_mobile}</div></div>
+          <div><div class="k">Name</div><div class="v">${s.guardian_name || "—"}</div></div>
+          <div><div class="k">Mobile</div><div class="v mono">${s.guardian_mobile || "—"}</div></div>
         </div>
       </div>
       <div class="so-section">
         <h4>Addresses</h4>
         <div class="so-kv">
-          <div><div class="k">Permanent</div><div class="v">${s.permanent_address}</div></div>
-          <div><div class="k">Current</div><div class="v">${s.current_address}</div></div>
+          <div><div class="k">Permanent</div><div class="v">${s.permanent_address || "—"}</div></div>
+          <div><div class="k">Current</div><div class="v">${s.current_address || "—"}</div></div>
         </div>
       </div>
       <div class="so-section">

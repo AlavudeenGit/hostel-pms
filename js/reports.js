@@ -65,6 +65,79 @@ const REPORTS = [
       ),
   },
   {
+    key: "all-inmates",
+    title: "All Inmates Report",
+    desc: "Every active student and employee combined.",
+    icon: icon(
+      `<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.2 2.7-5.6 6-5.6s6 2.4 6 5.6"/><circle cx="17.5" cy="8.5" r="2.4"/><path d="M15.5 14.6c2.6.4 4.5 2.4 4.5 5.4"/>`,
+    ),
+    columns: [
+      { label: "Name", value: (r) => r.name },
+      { label: "Type", value: (r) => r.type },
+      { label: "Room", value: (r) => r.rooms?.room_number || "" },
+      { label: "Mobile", value: (r) => r.mobile },
+      { label: "Admission No.", value: (r) => r.admission_number || "" },
+      { label: "Category", value: (r) => r.category || "" },
+      { label: "Blood Group", value: (r) => r.blood_group || "" },
+      { label: "Joined", value: (r) => formatDate(r.joining_date) },
+    ],
+    fetch: async () => listStudents({ status: "active" }),
+  },
+  {
+    key: "category-tn",
+    title: "TN Students",
+    desc: "Active inmates in category TN.",
+    icon: icon(`<path d="M12 3.5 21.5 20h-19L12 3.5Z"/><path d="M12 10v4"/>`),
+    columns: [
+      { label: "Name", value: (r) => r.name },
+      { label: "Type", value: (r) => r.type },
+      { label: "Room", value: (r) => r.rooms?.room_number || "" },
+      { label: "Mobile", value: (r) => r.mobile },
+      { label: "Admission No.", value: (r) => r.admission_number || "" },
+      { label: "Joined", value: (r) => formatDate(r.joining_date) },
+    ],
+    fetch: async () =>
+      (await listStudents({ status: "active" })).filter(
+        (s) => s.category === "TN",
+      ),
+  },
+  {
+    key: "category-kl",
+    title: "KL Students",
+    desc: "Active inmates in category KL.",
+    icon: icon(`<path d="M12 3.5 21.5 20h-19L12 3.5Z"/><path d="M12 10v4"/>`),
+    columns: [
+      { label: "Name", value: (r) => r.name },
+      { label: "Type", value: (r) => r.type },
+      { label: "Room", value: (r) => r.rooms?.room_number || "" },
+      { label: "Mobile", value: (r) => r.mobile },
+      { label: "Admission No.", value: (r) => r.admission_number || "" },
+      { label: "Joined", value: (r) => formatDate(r.joining_date) },
+    ],
+    fetch: async () =>
+      (await listStudents({ status: "active" })).filter(
+        (s) => s.category === "KL",
+      ),
+  },
+  {
+    key: "category-nm",
+    title: "NM Students",
+    desc: "Active inmates in category NM.",
+    icon: icon(`<path d="M12 3.5 21.5 20h-19L12 3.5Z"/><path d="M12 10v4"/>`),
+    columns: [
+      { label: "Name", value: (r) => r.name },
+      { label: "Type", value: (r) => r.type },
+      { label: "Room", value: (r) => r.rooms?.room_number || "" },
+      { label: "Mobile", value: (r) => r.mobile },
+      { label: "Admission No.", value: (r) => r.admission_number || "" },
+      { label: "Joined", value: (r) => formatDate(r.joining_date) },
+    ],
+    fetch: async () =>
+      (await listStudents({ status: "active" })).filter(
+        (s) => s.category === "NM",
+      ),
+  },
+  {
     key: "vacated",
     title: "Vacated Student Report",
     desc: "Historical record of vacated residents.",
