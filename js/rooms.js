@@ -1,7 +1,13 @@
 import { initTheme } from "./theme.js";
 import { requireSession } from "./auth.js";
 import { renderShell } from "./shell.js";
-import { listRooms, createRoom, updateRoom, listStudents } from "./db.js";
+import {
+  listRooms,
+  createRoom,
+  updateRoom,
+  updateRoomDetails,
+  listStudents,
+} from "./db.js";
 import { openModal, closeModal, confirmDialog } from "./modal.js";
 import { toast } from "./toast.js";
 import { qs, qsa } from "./utils.js";
@@ -108,14 +114,24 @@ function renderTable() {
         <td><span class="badge ${statusBadge[r.status] || "badge-grey"}">${statusLabel[r.status] || r.status}</span></td>
         <td style="max-width:220px; white-space:normal; font-size:12px; color:var(--ink-faint);">${names}</td>
         <td>
-          <select class="tb-filter-sm room-status-select" data-room="${r.id}">
-            <option value="available" ${r.status === "available" ? "selected" : ""}>Available</option>
-            <option value="maintenance" ${r.status === "maintenance" ? "selected" : ""}>Maintenance</option>
-          </select>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <select class="tb-filter-sm room-status-select" data-room="${r.id}">
+              <option value="available" ${r.status === "available" ? "selected" : ""}>Available</option>
+              <option value="maintenance" ${r.status === "maintenance" ? "selected" : ""}>Maintenance</option>
+            </select>
+            <button class="btn btn-sm btn-ghost edit-room-btn" data-room="${r.id}">Edit</button>
+          </div>
         </td>
       </tr>`;
     })
     .join("");
+
+  qsa(".edit-room-btn", tbody).forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const room = rooms.find((r) => r.id === btn.dataset.room);
+      if (room) openEditRoomModal(room);
+    });
+  });
 
   qsa(".room-status-select", tbody).forEach((sel) => {
     sel.addEventListener("change", async () => {
@@ -132,6 +148,60 @@ function renderTable() {
       toast(`Room ${room.room_number} marked ${sel.value}.`);
       refresh();
     });
+  });
+}
+
+function openEditRoomModal(room) {
+  const residents = residentsFor(room.id);
+  const el = openModal({
+    title: `Edit Room ${room.room_number}`,
+    sub: residents.length
+      ? `${residents.length} active resident(s) here — changing Sharing Type also updates their rent tier.`
+      : "No active residents in this room right now.",
+    bodyHTML: `
+      <form id="room-edit-form">
+        <div class="form-grid">
+          <div class="f-field"><label>Floor <span class="req">*</span></label>
+            <input type="number" id="e-floor" min="1" value="${room.floor}" required /></div>
+          <div class="f-field"><label>Room Number <span class="req">*</span></label>
+            <input type="text" id="e-room-number" value="${room.room_number}" required /></div>
+          <div class="f-field span-2"><label>Room Type (Sharing) <span class="req">*</span></label>
+            <select id="e-type" required>
+              <option value="2" ${Number(room.room_type) === 2 ? "selected" : ""}>2-Sharing</option>
+              <option value="3" ${Number(room.room_type) === 3 ? "selected" : ""}>3-Sharing</option>
+            </select>
+            <div class="hint">Currently ${room.occupied_beds} of ${room.capacity} beds occupied.</div>
+          </div>
+        </div>
+      </form>
+    `,
+    footHTML: `<button class="btn btn-ghost" data-close-modal>Cancel</button><button class="btn btn-primary" id="room-edit-save">Save changes</button>`,
+  });
+
+  el.querySelector("#room-edit-save").addEventListener("click", async () => {
+    const floor = qs("#e-floor", el).value;
+    const room_number = qs("#e-room-number", el).value.trim();
+    const room_type = qs("#e-type", el).value;
+    if (!floor || !room_number) {
+      toast("Floor and room number are required.", "error");
+      return;
+    }
+
+    const btn = el.querySelector("#room-edit-save");
+    btn.disabled = true;
+    btn.textContent = "Saving…";
+    try {
+      await updateRoomDetails(room.id, { floor, room_number, room_type });
+      toast(
+        `Room ${room_number} updated — changes are reflected across the dashboard, students, and reports.`,
+      );
+      closeModal();
+      refresh();
+    } catch (err) {
+      toast(err.message || "Could not update room.", "error");
+      btn.disabled = false;
+      btn.textContent = "Save changes";
+    }
   });
 }
 

@@ -68,6 +68,114 @@ export async function updateRoom(id, patch) {
   return mockDb.update("rooms", id, patch);
 }
 
+// Full room-details edit (floor / room number / sharing type) — used to
+// correct mistakes like a room created as 3-Sharing instead of 2-Sharing.
+// Floor and Room Number are read live via the students↔rooms join
+// everywhere in the app, so correcting them here already propagates
+// everywhere automatically. Sharing Type is different: each student also
+// stores their own `sharing_type` (used for rent calculation), so we
+// cascade that change to every currently-active student in the room —
+// otherwise rent generation would keep using the old, incorrect tier.
+export async function updateRoomDetails(id, { floor, room_number, room_type }) {
+  const rooms = await listRooms();
+  const room = rooms.find((r) => r.id === id);
+  if (!room) throw new Error("Room not found.");
+
+  const newFloor = Number(floor);
+  const newRoomNumber = Number(room_number);
+  const newType = Number(room_type);
+  const newCapacity = newType;
+  const typeChanged = newType !== Number(room.room_type);
+
+  if (
+    rooms.some((r) => r.id !== id && Number(r.room_number) === newRoomNumber)
+  ) {
+    throw new Error(
+      `Room ${newRoomNumber} already exists — choose a different room number.`,
+    );
+  }
+  if (room.occupied_beds > newCapacity) {
+    throw new Error(
+      `This room currently has ${room.occupied_beds} occupant(s). Move or vacate down to ${newCapacity} before switching to ${newType}-Sharing.`,
+    );
+  }
+
+  const status =
+    room.status === "maintenance"
+      ? "maintenance"
+      : room.occupied_beds >= newCapacity
+        ? "full"
+        : "available";
+  const patch = {
+    floor: newFloor,
+    room_number: newRoomNumber,
+    room_type: newType,
+    capacity: newCapacity,
+    status,
+  };
+
+  if (isConfigured) {
+    const { data, error } = await supabase
+      .from("rooms")
+      .update(patch)
+      .eq("id", id)
+      .select()
+      .single();
+    if (error) throw error;
+    if (typeChanged) {
+      const { error: studErr } = await supabase
+        .from("students")
+        .update({ sharing_type: newType })
+        .eq("room_id", id)
+        .eq("status", "active");
+      if (studErr) throw studErr;
+      await cascadeRentForRoom(id, newType);
+    }
+    return data;
+  }
+
+  const updated = mockDb.update("rooms", id, patch);
+  if (typeChanged) {
+    const students = mockDb
+      .get("students")
+      .map((s) =>
+        s.room_id === id && s.status === "active"
+          ? { ...s, sharing_type: newType }
+          : s,
+      );
+    mockDb.set("students", students);
+    await cascadeRentForRoom(id, newType);
+  }
+  return updated;
+}
+
+// Updates the current month's *unpaid/partial* payment rows for every
+// active student in this room to the corrected rent tier. Already-paid
+// records are left untouched — we never silently rewrite a settled
+// invoice, only bring forward-looking, uncollected amounts in line with
+// the corrected room configuration.
+async function cascadeRentForRoom(roomId, newType) {
+  const settings = await getSettings();
+  const month = monthStartISO();
+  const students = (await listStudents({ status: "active" })).filter(
+    (s) => s.room_id === roomId,
+  );
+  const payments = await listPayments({ month });
+
+  for (const s of students) {
+    const rentKey = `${s.type}_rent_${newType}`;
+    const newRent = Number(settings[rentKey] || 0);
+    const existingPayment = payments.find((p) => p.student_id === s.id);
+    if (
+      existingPayment &&
+      existingPayment.status !== "paid" &&
+      Number(existingPayment.room_rent) !== newRent
+    ) {
+      await collectPayment(existingPayment.id, { room_rent: newRent });
+    }
+  }
+}
+
 function recomputeRoomMock(roomId) {
   const rooms = mockDb.get("rooms");
   const students = mockDb.get("students");
@@ -276,6 +384,33 @@ export async function vacateStudent(id, { vacated_date, vacated_reason }) {
   return updated;
 }
 
+// Permanent removal — distinct from vacateStudent, which intentionally
+// preserves history. This is for correcting mistakes (e.g. a student added
+// in error), not for normal move-outs. The UI always confirms before
+// calling this. DB foreign keys (payments, room_history, documents) cascade
+// on delete, so we only need to clean those up ourselves in demo mode.
+export async function deleteStudent(id) {
+  if (isConfigured) {
+    const { data: existing, error: fetchErr } = await supabase
+      .from("students")
+      .select("room_id")
+      .eq("id", id)
+      .single();
+    if (fetchErr) throw fetchErr;
+    const { error } = await supabase.from("students").delete().eq("id", id);
+    if (error) throw error;
+    await recalcRoomOccupancySupabase(existing.room_id);
+    return true;
+  }
+  const existing = mockDb.get("students").find((s) => s.id === id);
+  mockDb.removeWhere("payments", (p) => p.student_id === id);
+  mockDb.removeWhere("room_history", (h) => h.student_id === id);
+  mockDb.removeWhere("documents", (d) => d.student_id === id);
+  mockDb.remove("students", id);
+  if (existing) recomputeRoomMock(existing.room_id);
+  return true;
+}
+
 export async function getRoomHistory(studentId) {
   if (isConfigured) {
     const { data, error } = await supabase
@@ -453,6 +588,21 @@ export async function updateWorker(id, patch) {
     return data;
   }
   return mockDb.update("workers", id, patch);
+}
+
+// Permanent removal, always confirmed in the UI first. DB foreign keys
+// (worker_salaries, documents) cascade on delete; demo mode cleans those
+// up manually since there's no real FK enforcement there.
+export async function deleteWorker(id) {
+  if (isConfigured) {
+    const { error } = await supabase.from("workers").delete().eq("id", id);
+    if (error) throw error;
+    return true;
+  }
+  mockDb.removeWhere("worker_salaries", (s) => s.worker_id === id);
+  mockDb.removeWhere("documents", (d) => d.worker_id === id);
+  mockDb.remove("workers", id);
+  return true;
 }
 
 function computeSalaryFields(s) {

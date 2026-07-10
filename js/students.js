@@ -7,6 +7,7 @@ import {
   createStudent,
   updateStudent,
   vacateStudent,
+  deleteStudent,
   getRoomHistory,
   listPayments,
   getSettings,
@@ -18,6 +19,7 @@ import {
   closeModal,
   openSlideover,
   closeSlideover,
+  confirmDialog,
 } from "./modal.js";
 import { toast } from "./toast.js";
 import { formatINR, formatDate, qs, qsa, initials } from "./utils.js";
@@ -414,6 +416,10 @@ async function openProfile(id) {
         </div>
       </div>
       ${s.status === "active" ? `<button class="btn btn-primary" id="vacate-btn" style="width:100%; justify-content:center;">Vacate student</button>` : ""}
+      <div class="so-section" style="margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px solid var(--line);">
+        <button class="btn btn-ghost" id="delete-student-btn" style="width:100%; justify-content:center; color:var(--ledger-red); border-color:var(--ledger-red-bg);">Delete student</button>
+        <div class="hint" style="text-align:center; margin-top:6px;">Permanent — removes this record and its payment history entirely. Use <b>Vacate</b> instead for a normal move-out.</div>
+      </div>
     `;
   }
 
@@ -486,6 +492,9 @@ async function openProfile(id) {
       const editStudentBtn = qs("#edit-student-btn", panel);
       if (editStudentBtn)
         editStudentBtn.addEventListener("click", () => openStudentFormModal(s));
+      const deleteBtn = qs("#delete-student-btn", panel);
+      if (deleteBtn)
+        deleteBtn.addEventListener("click", () => confirmDeleteStudent(s));
     }
   }
 
@@ -557,6 +566,25 @@ async function attemptVacate(s) {
     return;
   }
   openVacateModal(s);
+}
+
+function confirmDeleteStudent(s) {
+  confirmDialog({
+    title: `Delete ${s.name}?`,
+    message: `This permanently removes <b>${s.name}</b> and all of their payment history, room history, and documents. This cannot be undone. If they're simply moving out, use <b>Vacate</b> instead to keep their record.`,
+    confirmLabel: "Delete permanently",
+    danger: true,
+    onConfirm: async () => {
+      try {
+        await deleteStudent(s.id);
+        toast(`${s.name} has been deleted.`);
+        closeSlideover();
+        refresh();
+      } catch (err) {
+        toast(err.message || "Could not delete this student.", "error");
+      }
+    },
+  });
 }
 
 function openVacateModal(s) {

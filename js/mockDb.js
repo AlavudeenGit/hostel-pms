@@ -363,6 +363,16 @@ export const mockDb = {
     save(db);
     return updated;
   },
+  remove(table, id) {
+    const db = load();
+    db[table] = (db[table] || []).filter((r) => r.id !== id);
+    save(db);
+  },
+  removeWhere(table, predicate) {
+    const db = load();
+    db[table] = (db[table] || []).filter((r) => !predicate(r));
+    save(db);
+  },
   getSettings() {
     return load().settings;
   },

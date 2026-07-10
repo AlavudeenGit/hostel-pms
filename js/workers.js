@@ -5,12 +5,13 @@ import {
   listWorkers,
   createWorker,
   updateWorker,
+  deleteWorker,
   listSalaries,
   upsertSalary,
   monthStartISO,
   todayISO,
 } from "./db.js";
-import { openModal, closeModal } from "./modal.js";
+import { openModal, closeModal, confirmDialog } from "./modal.js";
 import { toast } from "./toast.js";
 import { formatINR, formatDate, qs, qsa } from "./utils.js";
 
@@ -60,15 +61,33 @@ function renderWorkers() {
       <td class="mono">${formatDate(w.joining_date)}</td>
       <td>${w.status === "active" ? `<span class="badge badge-green">Active</span>` : `<span class="badge badge-grey">Inactive</span>`}</td>
       <td>
-        <select class="tb-filter-sm worker-status-select" data-worker="${w.id}">
-          <option value="active" ${w.status === "active" ? "selected" : ""}>Active</option>
-          <option value="inactive" ${w.status === "inactive" ? "selected" : ""}>Inactive</option>
-        </select>
+        <div style="display:flex; align-items:center; gap:6px;">
+          <select class="tb-filter-sm worker-status-select" data-worker="${w.id}">
+            <option value="active" ${w.status === "active" ? "selected" : ""}>Active</option>
+            <option value="inactive" ${w.status === "inactive" ? "selected" : ""}>Inactive</option>
+          </select>
+          <button class="btn btn-sm btn-ghost edit-worker-btn" data-worker="${w.id}">Edit</button>
+          <button class="btn btn-sm btn-ghost delete-worker-btn" data-worker="${w.id}" style="color:var(--ledger-red);">Delete</button>
+        </div>
       </td>
     </tr>
   `,
     )
     .join("");
+
+  qsa(".edit-worker-btn", tbody).forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const w = workers.find((x) => x.id === btn.dataset.worker);
+      if (w) openWorkerFormModal(w);
+    });
+  });
+
+  qsa(".delete-worker-btn", tbody).forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const w = workers.find((x) => x.id === btn.dataset.worker);
+      if (w) confirmDeleteWorker(w);
+    });
+  });
 
   qsa(".worker-status-select", tbody).forEach((sel) => {
     sel.addEventListener("change", async () => {
@@ -185,24 +204,30 @@ function openSalaryModal(workerId) {
   });
 }
 
-function openAddWorkerModal() {
+function openWorkerFormModal(existing = null) {
+  const isEdit = !!existing;
+  const v = (key, fallback = "") =>
+    isEdit ? (existing[key] ?? fallback) : fallback;
+
   const el = openModal({
-    title: "Add worker",
+    title: isEdit ? `Edit — ${existing.name}` : "Add worker",
     bodyHTML: `
       <div class="form-grid">
-        <div class="f-field span-2"><label>Name <span class="req">*</span></label><input type="text" id="w-name" required /></div>
-        <div class="f-field"><label>Mobile <span class="req">*</span></label><input type="tel" id="w-mobile" required /></div>
-        <div class="f-field"><label>Alternative Mobile</label><input type="tel" id="w-alt-mobile" /></div>
+        <div class="f-field span-2"><label>Name <span class="req">*</span></label><input type="text" id="w-name" value="${v("name")}" required /></div>
+        <div class="f-field"><label>Mobile <span class="req">*</span></label><input type="tel" id="w-mobile" value="${v("mobile")}" required /></div>
+        <div class="f-field"><label>Alternative Mobile</label><input type="tel" id="w-alt-mobile" value="${v("alt_mobile")}" /></div>
         <div class="f-field"><label>Position <span class="req">*</span></label>
-          <select id="w-position"><option>Cleaner</option><option>Watchman</option><option>Cook</option><option>Other</option></select></div>
-        <div class="f-field"><label>Monthly Salary <span class="req">*</span></label><input type="number" id="w-salary" required /></div>
-        <div class="f-field"><label>Aadhar Number</label><input type="text" id="w-aadhar" /></div>
-        <div class="f-field"><label>Joining Date <span class="req">*</span></label><input type="date" id="w-joining" value="${todayISO()}" required /></div>
-        <div class="f-field span-2"><label>Permanent Address</label><textarea id="w-perm-addr"></textarea></div>
-        <div class="f-field span-2"><label>Current Address</label><textarea id="w-cur-addr"></textarea></div>
+          <select id="w-position">
+            ${["Cleaner", "Watchman", "Cook", "Other"].map((p) => `<option ${v("position") === p ? "selected" : ""}>${p}</option>`).join("")}
+          </select></div>
+        <div class="f-field"><label>Monthly Salary <span class="req">*</span></label><input type="number" id="w-salary" value="${v("salary")}" required /></div>
+        <div class="f-field"><label>Aadhar Number</label><input type="text" id="w-aadhar" value="${v("aadhar_number")}" /></div>
+        <div class="f-field"><label>Joining Date <span class="req">*</span></label><input type="date" id="w-joining" value="${v("joining_date", todayISO())}" required /></div>
+        <div class="f-field span-2"><label>Permanent Address</label><textarea id="w-perm-addr">${v("permanent_address")}</textarea></div>
+        <div class="f-field span-2"><label>Current Address</label><textarea id="w-cur-addr">${v("current_address")}</textarea></div>
       </div>
     `,
-    footHTML: `<button class="btn btn-ghost" data-close-modal>Cancel</button><button class="btn btn-primary" id="w-save">Add worker</button>`,
+    footHTML: `<button class="btn btn-ghost" data-close-modal>Cancel</button><button class="btn btn-primary" id="w-save">${isEdit ? "Save changes" : "Add worker"}</button>`,
   });
   el.querySelector("#w-save").addEventListener("click", async () => {
     if (
@@ -213,7 +238,7 @@ function openAddWorkerModal() {
       toast("Name, mobile and salary are required.", "error");
       return;
     }
-    await createWorker({
+    const payload = {
       name: qs("#w-name", el).value.trim(),
       mobile: qs("#w-mobile", el).value.trim(),
       alt_mobile: qs("#w-alt-mobile", el).value.trim(),
@@ -223,14 +248,38 @@ function openAddWorkerModal() {
       permanent_address: qs("#w-perm-addr", el).value.trim(),
       current_address: qs("#w-cur-addr", el).value.trim(),
       joining_date: qs("#w-joining", el).value,
-    });
-    toast("Worker added.");
+    };
+    if (isEdit) {
+      await updateWorker(existing.id, payload);
+      toast(`${payload.name} updated.`);
+    } else {
+      await createWorker(payload);
+      toast("Worker added.");
+    }
     closeModal();
     refresh();
   });
 }
 
-qs("#add-worker-btn").addEventListener("click", openAddWorkerModal);
+function confirmDeleteWorker(w) {
+  confirmDialog({
+    title: `Delete ${w.name}?`,
+    message: `This permanently removes <b>${w.name}</b> and their entire salary history. This cannot be undone. If they've simply left, set their status to <b>Inactive</b> instead to keep their record.`,
+    confirmLabel: "Delete permanently",
+    danger: true,
+    onConfirm: async () => {
+      try {
+        await deleteWorker(w.id);
+        toast(`${w.name} has been deleted.`);
+        refresh();
+      } catch (err) {
+        toast(err.message || "Could not delete this worker.", "error");
+      }
+    },
+  });
+}
+
+qs("#add-worker-btn").addEventListener("click", () => openWorkerFormModal());
 qs("#filter-worker-status").addEventListener("change", (e) => {
   statusFilter = e.target.value;
   renderWorkers();
