@@ -109,7 +109,7 @@ export function renderShell(
         <div class="admin-avatar">A</div>
         <div class="admin-meta">
           <div class="who">Admin</div>
-          <div class="role">Single sign-in</div>
+          <div class="role">Alavudeen - 9360302955</div>
         </div>
       </div>
     </div>
