@@ -370,10 +370,10 @@ function renderPendingPreview(payments) {
     .map(
       (p) => `
     <tr>
-      <td class="name-cell">${p.students?.name || "—"}</td>
-      <td class="mono">${p.students?.rooms?.room_number || "—"}</td>
-      <td class="num">${formatINR(p.balance)}</td>
-      <td><span class="badge ${p.status === "partial" ? "badge-amber" : "badge-red"}">${p.status === "partial" ? "Partial" : "Pending"}</span></td>
+      <td class="name-cell" data-label="Student">${p.students?.name || "—"}</td>
+      <td class="mono" data-label="Room">${p.students?.rooms?.room_number || "—"}</td>
+      <td class="num" data-label="Balance">${formatINR(p.balance)}</td>
+      <td data-label="Status"><span class="badge ${p.status === "partial" ? "badge-amber" : "badge-red"}">${p.status === "partial" ? "Partial" : "Pending"}</span></td>
     </tr>
   `,
     )

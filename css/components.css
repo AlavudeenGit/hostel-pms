@@ -12,7 +12,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-3);
   margin-bottom: var(--space-4);
+}
+.card-head > *:last-child {
+  flex-shrink: 0;
 }
 .card-head h3 {
   font-size: 15px;
@@ -225,6 +230,74 @@ table.reg-table {
 .reg-table .name-cell {
   color: var(--ink);
   font-weight: 500;
+}
+
+/* ============================================================
+   Responsive table → card stack (opt-in via .table-wrap.stack-mobile)
+   Used where horizontal scrolling isn't acceptable — the table
+   becomes a list of labeled cards instead of overflowing sideways.
+   Each <td> needs a data-label="..." attribute to show its heading.
+   ============================================================ */
+@media (max-width: 700px) {
+  .table-wrap.stack-mobile {
+    overflow-x: visible;
+    background: none;
+  }
+  .table-wrap.stack-mobile table.reg-table {
+    min-width: 0;
+    width: 100%;
+  }
+  .table-wrap.stack-mobile thead {
+    display: none;
+  }
+  .table-wrap.stack-mobile tbody {
+    display: block;
+  }
+  .table-wrap.stack-mobile tr {
+    display: block;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    padding: var(--space-2) var(--space-4);
+    margin-bottom: var(--space-3);
+    background: var(--paper);
+  }
+  .table-wrap.stack-mobile tr:last-child {
+    margin-bottom: 0;
+  }
+  .table-wrap.stack-mobile tbody tr:hover {
+    background: var(--paper);
+  }
+  .table-wrap.stack-mobile td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--line);
+    white-space: normal;
+    text-align: right;
+  }
+  .table-wrap.stack-mobile td:last-child {
+    border-bottom: none;
+  }
+  .table-wrap.stack-mobile td::before {
+    content: attr(data-label);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    text-align: left;
+    flex-shrink: 0;
+  }
+  .table-wrap.stack-mobile td[data-label=""]::before,
+  .table-wrap.stack-mobile td:not([data-label])::before {
+    content: none;
+  }
+  .table-wrap.stack-mobile td > div {
+    justify-content: flex-end;
+    width: 100%;
+  }
 }
 
 /* ---------- Toast ---------- */

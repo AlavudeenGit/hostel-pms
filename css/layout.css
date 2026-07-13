@@ -371,7 +371,7 @@
    the layout — but give it a visible edge fade so it reads as scrollable
    instead of looking like clipped/broken content. */
 @media (max-width: 700px) {
-  .table-wrap {
+  .table-wrap:not(.stack-mobile) {
     -webkit-overflow-scrolling: touch;
     background:
       linear-gradient(to right, var(--paper) 0%, transparent 2%) left,
@@ -382,7 +382,7 @@
       20px 100%;
     background-attachment: local, local;
   }
-  .reg-table {
+  .table-wrap:not(.stack-mobile) .reg-table {
     min-width: 640px;
   }
 }

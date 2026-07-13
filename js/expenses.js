@@ -92,13 +92,13 @@ function renderTable() {
     .map(
       (e) => `
     <tr>
-      <td class="mono">${formatDate(e.expense_date)}</td>
-      <td class="name-cell">${e.name}</td>
-      <td><span class="badge badge-blue">${e.category}</span></td>
-      <td>${e.paid_to || "—"}</td>
-      <td class="num">${formatINR(e.amount)}</td>
-      <td style="text-transform:capitalize;">${e.payment_method || "—"}</td>
-      <td>
+      <td class="mono" data-label="Date">${formatDate(e.expense_date)}</td>
+      <td class="name-cell" data-label="Name">${e.name}</td>
+      <td data-label="Category"><span class="badge badge-blue">${e.category}</span></td>
+      <td data-label="Paid To">${e.paid_to || "—"}</td>
+      <td class="num" data-label="Amount">${formatINR(e.amount)}</td>
+      <td style="text-transform:capitalize;" data-label="Method">${e.payment_method || "—"}</td>
+      <td data-label="Actions">
         <div style="display:flex; gap:6px;">
           <button class="btn btn-sm btn-ghost edit-expense-btn" data-id="${e.id}">Edit</button>
           <button class="btn btn-sm btn-ghost delete-expense-btn" data-id="${e.id}" style="color:var(--ledger-red);">Delete</button>
