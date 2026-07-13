@@ -74,6 +74,7 @@ function renderTable() {
     partial: "badge-amber",
     pending: "badge-red",
   };
+  // <td class="num">${formatINR(p.bike_charge)}</td>
   tbody.innerHTML = rows
     .map(
       (p) => `
@@ -81,7 +82,7 @@ function renderTable() {
       <td class="name-cell">${p.students?.name || "—"}</td>
       <td class="mono">${p.students?.rooms?.room_number || "—"}</td>
       <td class="num">${formatINR(p.room_rent)}</td>
-      <td class="num">${formatINR(p.bike_charge)}</td>
+      
       <td>
         <input type="number" class="mess-inline-input" data-id="${p.id}" min="0" value="${Number(p.mess_charge || 0)}" />
       </td>
@@ -162,10 +163,11 @@ function openCollectModal(p) {
   const el = openModal({
     title: `Collect payment — ${p.students?.name || ""}`,
     sub: `Room ${p.students?.rooms?.room_number || "—"} · ${formatDate(p.month_year)}`,
+    // <div class="f-field"><label>Bike Charge</label><input type="number" id="c-bike" value="${p.bike_charge || 0}" /></div>
+
     bodyHTML: `
       <div class="form-grid">
         <div class="f-field"><label>Room Rent</label><input type="number" id="c-rent" value="${p.room_rent || 0}" /></div>
-        <div class="f-field"><label>Bike Charge</label><input type="number" id="c-bike" value="${p.bike_charge || 0}" /></div>
         <div class="f-field"><label>Mess Charge</label><input type="number" id="c-mess" value="${p.mess_charge || 0}" />
           <div class="hint">Specific to this student — changing it won't affect anyone else's record.</div></div>
         <div class="f-field"><label>Total</label><input type="text" id="c-total" value="${formatINR(p.total_amount)}" disabled /></div>
