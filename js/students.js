@@ -146,25 +146,37 @@ async function openStudentFormModal(existing = null) {
     bodyHTML: `
       <form id="student-form">
         <div class="form-grid">
+        <div class="f-field"><label>Admission Number</label><input type="text" id="f-admission-no" value="${v("admission_number")}" /></div>
           <div class="f-field span-2"><label>Full Name <span class="req">*</span></label><input type="text" id="f-name" value="${v("name")}" required /></div>
 
           <div class="f-field"><label>Mobile Number <span class="req">*</span></label><input type="tel" id="f-mobile" value="${v("mobile")}" required /></div>
-          <div class="f-field"><label>Alternative Mobile</label><input type="tel" id="f-alt-mobile" value="${v("alt_mobile")}" /></div>
+          <div class="f-field"><label>Room <span class="req">*</span></label>
+          <select id="f-room" required><option value="">Select a room</option>${roomOptions}</select></div>
+          <div class="f-field"><label>Joining Date</label>
+          <input type="date" id="f-joining" value="${v("joining_date", todayISO())}" /></div>
+          
 
-          <div class="f-field"><label>Email</label><input type="email" id="f-email" value="${v("email")}" /></div>
           <div class="f-field"><label>Student / Employee</label>
             <select id="f-type">
               <option value="student" ${v("type") === "student" ? "selected" : ""}>Student</option>
               <option value="employee" ${v("type") === "employee" ? "selected" : ""}>Employee</option>
             </select></div>
 
-          <div class="f-field"><label>Room <span class="req">*</span></label>
-            <select id="f-room" required><option value="">Select a room</option>${roomOptions}</select></div>
-          <div class="f-field"><label>Joining Date</label>
-            <input type="date" id="f-joining" value="${v("joining_date", todayISO())}" /></div>
 
-          <div class="f-field"><label>Admission Number</label><input type="text" id="f-admission-no" value="${v("admission_number")}" /></div>
-          <div class="f-field"><label>Blood Group</label><input type="text" id="f-blood-group" value="${v("blood_group")}" placeholder="e.g. O+" /></div>
+          <div class="f-field">
+  <label>Blood Group</label>
+  <select id="f-blood-group">
+    <option value="" ${v("blood_group") === "" ? "selected" : ""}>Select Blood Group</option>
+    <option value="A+" ${v("blood_group") === "A+" ? "selected" : ""}>A+</option>
+    <option value="A-" ${v("blood_group") === "A-" ? "selected" : ""}>A-</option>
+    <option value="B+" ${v("blood_group") === "B+" ? "selected" : ""}>B+</option>
+    <option value="B-" ${v("blood_group") === "B-" ? "selected" : ""}>B-</option>
+    <option value="AB+" ${v("blood_group") === "AB+" ? "selected" : ""}>AB+</option>
+    <option value="AB-" ${v("blood_group") === "AB-" ? "selected" : ""}>AB-</option>
+    <option value="O+" ${v("blood_group") === "O+" ? "selected" : ""}>O+</option>
+    <option value="O-" ${v("blood_group") === "O-" ? "selected" : ""}>O-</option>
+  </select>
+</div>
 
           <div class="f-field"><label>Category</label>
             <select id="f-category">
@@ -173,11 +185,12 @@ async function openStudentFormModal(existing = null) {
               <option value="KL" ${v("category") === "KL" ? "selected" : ""}>KL</option>
               <option value="NM" ${v("category") === "NM" ? "selected" : ""}>NM</option>
             </select></div>
-          <div class="f-field"></div>
+   
 
           <div class="f-field"><label>Caution Deposit (₹)</label><input type="number" id="f-caution-deposit" min="0" value="${isEdit ? (existing.caution_deposit ?? "") : ""}" /></div>
           <div class="f-field"><label>Mess Deposit (₹)</label><input type="number" id="f-mess-deposit" min="0" value="${isEdit ? (existing.mess_deposit ?? "") : ""}" /></div>
-
+          <div class="f-field"><label>Alternative Mobile</label><input type="tel" id="f-alt-mobile" value="${v("alt_mobile")}" /></div>
+          <div class="f-field"><label>Email</label><input type="email" id="f-email" value="${v("email")}" /></div>
           <div class="f-field"><label>Mess Available</label>
             <div class="f-toggle" data-toggle="mess"><button type="button" data-val="true" class="${checked("mess_available") ? "active" : ""}">Yes</button><button type="button" data-val="false" class="${checked("mess_available") ? "" : "active"}">No</button></div></div>
           <div class="f-field"><label>Mess Charge (₹ / month)</label>
