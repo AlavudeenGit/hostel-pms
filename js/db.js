@@ -687,6 +687,35 @@ export async function createExpense(payload) {
   return mockDb.insert("expenses", body);
 }
 
+export async function updateExpense(id, patch) {
+  if (isConfigured) {
+    const { data, error } = await supabase
+      .from("expenses")
+      .update(patch)
+      .eq("id", id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  }
+  return mockDb.update("expenses", id, patch);
+}
+
+// Permanent removal, always confirmed in the UI first. Expenses have no
+// dependent tables, so this is a plain delete — the dashboard, reports,
+// and the category chart all read expenses live, so a delete or edit
+// here shows up everywhere the next time they load, with no separate
+// sync step needed.
+export async function deleteExpense(id) {
+  if (isConfigured) {
+    const { error } = await supabase.from("expenses").delete().eq("id", id);
+    if (error) throw error;
+    return true;
+  }
+  mockDb.remove("expenses", id);
+  return true;
+}
+
 /* ================================================================
    SETTINGS
    ================================================================ */
