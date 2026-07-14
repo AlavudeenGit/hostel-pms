@@ -259,6 +259,8 @@ const REPORTS = [
       { label: "Name", value: (r) => r.name },
       { label: "Room", value: (r) => r.rooms?.room_number || "" },
       { label: "Mobile", value: (r) => r.mobile },
+      { label: "Vehicle Number", value: (r) => r.vehicle_number },
+
     ],
     fetch: async () =>
       (await listStudents({ status: "active" })).filter(
