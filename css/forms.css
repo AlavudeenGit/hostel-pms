@@ -358,6 +358,13 @@ select.tb-filter-sm:focus {
   margin-bottom: 4px;
 }
 
+.filter-stats-note {
+  grid-column: 1 / -1;
+  font-size: 11.5px;
+  color: var(--ink-faint);
+  padding: 2px 2px 0;
+}
+
 /* Inline editable amount inputs inside table cells (e.g. Mess charge
    in the Payments table) — compact, right-aligned, blends into the row
    until focused. */

@@ -285,4 +285,7 @@ qs("#filter-worker-status").addEventListener("change", (e) => {
   renderWorkers();
 });
 
-refresh();
+refresh().then(() => {
+  if (new URLSearchParams(location.search).get("new") === "1")
+    openWorkerFormModal();
+});

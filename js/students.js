@@ -60,7 +60,7 @@ function renderTable() {
     if (q) {
       const room = s.rooms ? String(s.rooms.room_number) : "";
       const hay =
-        `${s.name} ${s.mobile} ${s.aadhar_number || ""} ${s.admission_number || ""} ${room}`.toLowerCase();
+        `${s.name} ${s.mobile} ${s.aadhar_number || ""} ${s.admission_number || ""} ${s.vehicle_number || ""} ${room}`.toLowerCase();
       if (!hay.includes(q)) return false;
     }
     return true;
@@ -198,7 +198,7 @@ async function openStudentFormModal(existing = null) {
             <div class="hint">Independent per student — editable any time, doesn't affect anyone else.</div></div>
           <div class="f-field"><label>Bike Available</label>
             <div class="f-toggle" data-toggle="bike"><button type="button" data-val="true" class="${checked("bike_available") ? "active" : ""}">Yes</button><button type="button" data-val="false" class="${checked("bike_available") ? "" : "active"}">No</button></div></div>
-          <div class="f-field"></div>
+          <div class="f-field"><label>Vehicle Number</label><input type="text" id="f-vehicle-number" value="${v("vehicle_number")}" placeholder="e.g. TN 07 AB 1234" /></div>
 
           <div class="f-field span-2"><label>Photo</label>
             <div class="f-upload"><input type="file" id="f-photo" accept="image/*" /><div>${isEdit ? "Click to replace photo" : "Click or drop a photo"}</div><div class="fname" id="f-photo-name"></div></div></div>
@@ -224,7 +224,7 @@ async function openStudentFormModal(existing = null) {
         </div>
       </form>
     `,
-    footHTML: `<button class="btn btn-ghost" data-close-modal>Cancel</button><button class="btn btn-primary" id="student-save">${isEdit ? "Save changes" : "Save student"}</button>`,
+    footHTML: `<button class="btn btn-ghost" data-close-modal>Cancel</button><button class="btn btn-primary" id="student-save">${isEdit ? "Save changes" : "Save Member"}</button>`,
   });
 
   qsa(".f-toggle", el).forEach((toggle) => {
@@ -305,6 +305,7 @@ async function openStudentFormModal(existing = null) {
             : defaultMess,
         bike_available:
           qs('[data-toggle="bike"] .active', el).dataset.val === "true",
+        vehicle_number: qs("#f-vehicle-number", el).value.trim(),
         photo_url,
         aadhar_front_url,
         aadhar_back_url,
@@ -332,7 +333,7 @@ async function openStudentFormModal(existing = null) {
     } catch (err) {
       toast(err.message || "Could not save student.", "error");
       btn.disabled = false;
-      btn.textContent = isEdit ? "Save changes" : "Save student";
+      btn.textContent = isEdit ? "Save changes" : "Save Member";
     }
   });
 }
@@ -415,6 +416,7 @@ async function openProfile(id) {
           <div><div class="k">Mess Available</div><div class="v">${s.mess_available ? "Yes" : "No"}</div></div>
           <div><div class="k">Mess Charge</div><div class="v num">${s.mess_available ? formatINR(s.mess_charge || 0) + "/mo" : "—"}</div></div>
           <div><div class="k">Bike Available</div><div class="v">${s.bike_available ? "Yes" : "No"}</div></div>
+          <div><div class="k">Vehicle Number</div><div class="v mono">${s.vehicle_number || "—"}</div></div>
         </div>
         <button class="btn btn-sm btn-ghost" id="edit-mess-btn" style="margin-top:var(--space-3);">Edit mess charge</button>
       </div>
@@ -664,4 +666,7 @@ qsa(".tab-btn").forEach((btn) => {
   });
 });
 
-refresh();
+refresh().then(() => {
+  if (new URLSearchParams(location.search).get("new") === "1")
+    openStudentFormModal();
+});

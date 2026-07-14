@@ -62,6 +62,7 @@ create table if not exists students (
   mess_available boolean not null default false,
   mess_charge numeric(10,2),
   bike_available boolean not null default false,
+  vehicle_number text,
   photo_url text,
   admission_number text,
   blood_group text,

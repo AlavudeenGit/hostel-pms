@@ -26,8 +26,7 @@ async function refresh() {
     listStudents({ status: "active" }),
   ]);
   populateFloorFilter();
-  renderStats();
-  renderTable();
+  renderAll();
 }
 
 function populateFloorFilter() {
@@ -40,41 +39,62 @@ function populateFloorFilter() {
   sel.value = current;
 }
 
-function renderStats() {
-  const totalBeds = rooms.reduce((s, r) => s + r.capacity, 0);
-  const occupied = rooms.reduce((s, r) => s + r.occupied_beds, 0);
-  const maintenance = rooms.filter((r) => r.status === "maintenance").length;
-  const full = rooms.filter((r) => r.status === "full").length;
-  const cards = [
-    { tag: "Total Rooms", value: rooms.length },
-    { tag: "Total Beds", value: totalBeds },
-    { tag: "Occupied Beds", value: occupied },
-    { tag: "Available Beds", value: totalBeds - occupied },
-  ];
-  qs("#room-stats").innerHTML = cards
-    .map(
-      (c) => `
-    <div class="stat-card"><div class="tag">${c.tag}</div><div class="value num">${c.value}</div></div>
-  `,
-    )
-    .join("");
-}
-
-function residentsFor(roomId) {
-  return activeStudents.filter((s) => s.room_id === roomId);
-}
-
-function renderTable() {
+function getFilteredRooms() {
   const q = filters.search.trim().toLowerCase();
-  const rows = rooms.filter((r) => {
+  return rooms.filter((r) => {
     if (filters.floor && String(r.floor) !== filters.floor) return false;
     if (filters.type && String(r.room_type) !== filters.type) return false;
     if (filters.status && r.status !== filters.status) return false;
     if (q && !String(r.room_number).toLowerCase().includes(q)) return false;
     return true;
   });
+}
 
-  const tbody = qs("#rooms-tbody");
+function renderStats(filteredRooms) {
+  const totalBeds = filteredRooms.reduce((s, r) => s + r.capacity, 0);
+  const occupied = filteredRooms.reduce((s, r) => s + r.occupied_beds, 0);
+  const hasFilter =
+    filters.floor || filters.type || filters.status || filters.search.trim();
+  const cards = [
+    { tag: "Total Rooms", value: filteredRooms.length },
+    { tag: "Total Beds", value: totalBeds },
+    { tag: "Occupied Beds", value: occupied },
+    { tag: "Available Beds", value: totalBeds - occupied },
+  ];
+  qs("#room-stats").innerHTML =
+    cards
+      .map(
+        (c) => `
+    <div class="stat-card"><div class="tag">${c.tag}</div><div class="value num">${c.value}</div></div>
+  `,
+      )
+      .join("") +
+    (hasFilter
+      ? `<div class="filter-stats-note">Showing stats for the current filter${filterSummary()}</div>`
+      : "");
+}
+
+function filterSummary() {
+  const parts = [];
+  if (filters.floor) parts.push(`Floor ${filters.floor}`);
+  if (filters.type) parts.push(`${filters.type}-Sharing`);
+  if (filters.status)
+    parts.push(filters.status[0].toUpperCase() + filters.status.slice(1));
+  if (filters.search.trim()) parts.push(`"${filters.search.trim()}"`);
+  return parts.length ? `: ${parts.join(" · ")}` : "";
+}
+
+function residentsFor(roomId) {
+  return activeStudents.filter((s) => s.room_id === roomId);
+}
+
+function renderAll() {
+  const filtered = getFilteredRooms();
+  renderStats(filtered);
+  renderTable(filtered);
+}
+
+function renderTable(rows) {
   const emptyBox = qs("#rooms-empty");
 
   if (!rows.length) {
@@ -254,19 +274,19 @@ function openAddRoomModal() {
 qs("#add-room-btn").addEventListener("click", openAddRoomModal);
 qs("#room-search").addEventListener("input", (e) => {
   filters.search = e.target.value;
-  renderTable();
+  renderAll();
 });
 qs("#filter-floor").addEventListener("change", (e) => {
   filters.floor = e.target.value;
-  renderTable();
+  renderAll();
 });
 qs("#filter-type").addEventListener("change", (e) => {
   filters.type = e.target.value;
-  renderTable();
+  renderAll();
 });
 qs("#filter-status").addEventListener("change", (e) => {
   filters.status = e.target.value;
-  renderTable();
+  renderAll();
 });
 
 refresh();
