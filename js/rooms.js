@@ -95,6 +95,7 @@ function renderAll() {
 }
 
 function renderTable(rows) {
+  const tbody = qs("#rooms-tbody");
   const emptyBox = qs("#rooms-empty");
 
   if (!rows.length) {
