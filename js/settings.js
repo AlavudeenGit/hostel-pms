@@ -36,7 +36,8 @@ qs("#save-settings-btn").addEventListener("click", async () => {
   btn.textContent = "Saving…";
   const patch = {};
   Object.entries(FIELD_MAP).forEach(([id, key]) => {
-    patch[key] = qs(`#${id}`).value;
+    const el = qs(`#${id}`);
+    patch[key] = el ? el.value : "";
   });
   try {
     await updateSettings(patch);
