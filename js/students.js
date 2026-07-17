@@ -201,18 +201,42 @@ async function openStudentFormModal(existing = null) {
           <div class="f-field"><label>Vehicle Number</label><input type="text" id="f-vehicle-number" value="${v("vehicle_number")}" placeholder="e.g. TN 07 AB 1234" /></div>
 
           <div class="f-field span-2"><label>Photo</label>
-            <div class="f-upload"><input type="file" id="f-photo" accept="image/*" /><div>${isEdit ? "Click to replace photo" : "Click or drop a photo"}</div><div class="fname" id="f-photo-name"></div></div></div>
+            <div class="f-upload">
+              <input type="file" id="f-photo" accept="image/*" data-existing-url="${isEdit && existing.photo_url ? existing.photo_url : ""}" />
+              <button type="button" class="f-upload-clear" aria-label="Remove photo">×</button>
+              <div>${isEdit ? "Click to replace photo" : "Click or drop a photo"}</div>
+              <div class="fname" id="f-photo-name">${isEdit && existing.photo_url ? "Current file attached" : ""}</div>
+            </div>
+            <input type="hidden" id="f-photo-remove" value="false" /></div>
 
           <div class="f-field"><label>Aadhar Number</label><input type="text" id="f-aadhar" value="${v("aadhar_number")}" /></div>
           <div class="f-field"><label>Driving License Number</label><input type="text" id="f-license-no" value="${v("license_number")}" /></div>
 
           <div class="f-field"><label>Aadhar Front Image</label>
-            <div class="f-upload"><input type="file" id="f-aadhar-front" accept="image/*" /><div>${isEdit ? "Replace front (optional)" : "Upload front (optional)"}</div><div class="fname" id="f-aadhar-front-name"></div></div></div>
+            <div class="f-upload">
+              <input type="file" id="f-aadhar-front" accept="image/*" data-existing-url="${isEdit && existing.aadhar_front_url ? existing.aadhar_front_url : ""}" />
+              <button type="button" class="f-upload-clear" aria-label="Remove aadhar front">×</button>
+              <div>${isEdit ? "Replace front (optional)" : "Upload front (optional)"}</div>
+              <div class="fname" id="f-aadhar-front-name">${isEdit && existing.aadhar_front_url ? "Current file attached" : ""}</div>
+            </div>
+            <input type="hidden" id="f-aadhar-front-remove" value="false" /></div>
           <div class="f-field"><label>Aadhar Back Image</label>
-            <div class="f-upload"><input type="file" id="f-aadhar-back" accept="image/*" /><div>${isEdit ? "Replace back (optional)" : "Upload back (optional)"}</div><div class="fname" id="f-aadhar-back-name"></div></div></div>
+            <div class="f-upload">
+              <input type="file" id="f-aadhar-back" accept="image/*" data-existing-url="${isEdit && existing.aadhar_back_url ? existing.aadhar_back_url : ""}" />
+              <button type="button" class="f-upload-clear" aria-label="Remove aadhar back">×</button>
+              <div>${isEdit ? "Replace back (optional)" : "Upload back (optional)"}</div>
+              <div class="fname" id="f-aadhar-back-name">${isEdit && existing.aadhar_back_url ? "Current file attached" : ""}</div>
+            </div>
+            <input type="hidden" id="f-aadhar-back-remove" value="false" /></div>
 
           <div class="f-field span-2"><label>Driving License Image</label>
-            <div class="f-upload"><input type="file" id="f-license-img" accept="image/*" /><div>Upload license (optional)</div><div class="fname" id="f-license-img-name"></div></div></div>
+            <div class="f-upload">
+              <input type="file" id="f-license-img" accept="image/*" data-existing-url="${isEdit && existing.license_url ? existing.license_url : ""}" />
+              <button type="button" class="f-upload-clear" aria-label="Remove license">×</button>
+              <div>Upload license (optional)</div>
+              <div class="fname" id="f-license-img-name">${isEdit && existing.license_url ? "Current file attached" : ""}</div>
+            </div>
+            <input type="hidden" id="f-license-img-remove" value="false" /></div>
 
           <div class="f-field span-2"><label>Permanent Address</label><textarea id="f-perm-addr">${v("permanent_address")}</textarea></div>
           <div class="f-field span-2"><label>Current Address</label><textarea id="f-cur-addr">${v("current_address")}</textarea></div>
@@ -237,10 +261,39 @@ async function openStudentFormModal(existing = null) {
   });
 
   qsa(".f-upload input[type=file]", el).forEach((input) => {
+    const uploadBox = input.closest(".f-upload");
+    const clearBtn = qs(".f-upload-clear", uploadBox);
+    const nameEl = qs(`#${input.id}-name`, el);
+    const removeFlag = qs(`#${input.id}-remove`, el);
+
+    const setClearVisibility = () => {
+      const shouldShow = !!input.files?.[0] || !!input.dataset.existingUrl;
+      if (clearBtn) {
+        clearBtn.classList.toggle("show", shouldShow);
+      }
+    };
+
     input.addEventListener("change", () => {
-      const nameEl = qs(`#${input.id}-name`, el);
-      if (nameEl) nameEl.textContent = input.files[0]?.name || "";
+      if (nameEl) {
+        nameEl.textContent = input.files[0]?.name || "";
+      }
+      if (removeFlag) removeFlag.value = "false";
+      setClearVisibility();
     });
+
+    if (clearBtn) {
+      clearBtn.addEventListener("click", (event) => {
+        event.stopPropagation();
+        input.value = "";
+        if (nameEl) nameEl.textContent = "";
+        if (removeFlag) {
+          removeFlag.value = input.dataset.existingUrl ? "true" : "false";
+        }
+        setClearVisibility();
+      });
+    }
+
+    setClearVisibility();
   });
 
   el.querySelector("#student-save").addEventListener("click", async () => {
@@ -261,20 +314,27 @@ async function openStudentFormModal(existing = null) {
         qs("#f-aadhar-back", el).files[0],
         qs("#f-license-img", el).files[0],
       ];
+      const removePhoto = isEdit && qs("#f-photo-remove", el)?.value === "true";
+      const removeFront =
+        isEdit && qs("#f-aadhar-front-remove", el)?.value === "true";
+      const removeBack =
+        isEdit && qs("#f-aadhar-back-remove", el)?.value === "true";
+      const removeLicense =
+        isEdit && qs("#f-license-img-remove", el)?.value === "true";
       const [photo_url, aadhar_front_url, aadhar_back_url, license_url] =
         await Promise.all([
           photoFile
             ? uploadFile(photoFile, "photos")
-            : Promise.resolve(isEdit ? existing.photo_url : ""),
+            : Promise.resolve(removePhoto ? "" : isEdit ? existing.photo_url : ""),
           frontFile
             ? uploadFile(frontFile, "documents")
-            : Promise.resolve(isEdit ? existing.aadhar_front_url : ""),
+            : Promise.resolve(removeFront ? "" : isEdit ? existing.aadhar_front_url : ""),
           backFile
             ? uploadFile(backFile, "documents")
-            : Promise.resolve(isEdit ? existing.aadhar_back_url : ""),
+            : Promise.resolve(removeBack ? "" : isEdit ? existing.aadhar_back_url : ""),
           licenseFile
             ? uploadFile(licenseFile, "documents")
-            : Promise.resolve(isEdit ? existing.license_url : ""),
+            : Promise.resolve(removeLicense ? "" : isEdit ? existing.license_url : ""),
         ]);
 
       const room = rooms.find((r) => r.id === qs("#f-room", el).value);
