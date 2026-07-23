@@ -8,6 +8,7 @@ import {
   listExpenses,
   listSalaries,
   listWorkers,
+  getSettings,
 } from "./db.js";
 import { exportToCSV, exportToExcel, exportToPDF } from "./export.js";
 import { formatINR, formatDate, qs, qsa } from "./utils.js";
@@ -82,6 +83,60 @@ const REPORTS = [
       { label: "Joined", value: (r) => formatDate(r.joining_date) },
     ],
     fetch: async () => listStudents({ status: "active" }),
+  },
+  {
+    key: "due-report",
+    title: "Due Report",
+    desc: "Students with pending fees.",
+    icon: icon(
+      `<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.2 2.7-5.6 6-5.6s6 2.4 6 5.6"/><circle cx="17.5" cy="8.5" r="2.4"/><path d="M15.5 14.6c2.6.4 4.5 2.4 4.5 5.4"/>`,
+    ),
+    columns: [
+      { label: "Admission No.", value: (r) => r.admission_number || "" },
+      { label: "Name", value: (r) => r.name },
+      { label: "Type", value: (r) => r.type },
+      { label: "Room", value: (r) => r.rooms?.room_number || "" },
+      { label: "Bike Number", value: (r) => r.vehicle_number || "" },
+      { label: "Rent", value: (r) => formatINR(r.room_rent) },
+      {
+        label: "Bill No & Date",
+        value: (r) => "",
+      },
+    ],
+    fetch: async () => {
+      const now = new Date();
+      const month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-01`;
+      const [students, payments, settings] = await Promise.all([
+        listStudents({ status: "active" }),
+        listPayments({ month }),
+        getSettings(),
+      ]);
+      const studentsById = new Map(
+        students.map((student) => [student.id, student]),
+      );
+
+      return payments
+        .filter((payment) => payment.status !== "paid")
+        .map((payment) => {
+          const student = studentsById.get(payment.student_id);
+          if (!student) return null;
+          const rentKey = `${student.type}_rent_${student.sharing_type}`;
+          return {
+            ...student,
+            ...payment,
+            rooms: student.rooms,
+            room_rent:
+              Number(payment.room_rent) || Number(settings[rentKey] || 0),
+          };
+        })
+        .filter(Boolean)
+        .sort(
+          (a, b) =>
+            Number(a.rooms?.floor || 0) - Number(b.rooms?.floor || 0) ||
+            Number(a.rooms?.room_number || 0) -
+              Number(b.rooms?.room_number || 0),
+        );
+    },
   },
   {
     key: "category-tn",
@@ -260,7 +315,6 @@ const REPORTS = [
       { label: "Room", value: (r) => r.rooms?.room_number || "" },
       { label: "Mobile", value: (r) => r.mobile },
       { label: "Vehicle Number", value: (r) => r.vehicle_number },
-
     ],
     fetch: async () =>
       (await listStudents({ status: "active" })).filter(
