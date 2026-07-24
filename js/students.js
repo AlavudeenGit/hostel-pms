@@ -80,8 +80,9 @@ function renderTable() {
 
   tbody.innerHTML = rows
     .map(
-      (s) => `
+      (s,index) => `
     <tr class="student-row" data-id="${s.id}">
+      <td class="mono">${index + 1}</td>
       <td class="name-cell" style="cursor:pointer;">${s.name}</td>
       <td style="text-transform:capitalize;">${s.type}</td>
       <td class="mono">${s.rooms ? s.rooms.room_number : "—"}</td>

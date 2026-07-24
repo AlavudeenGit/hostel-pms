@@ -121,11 +121,12 @@ function renderTable(rows) {
   };
 
   tbody.innerHTML = rows
-    .map((r) => {
+    .map((r,index) => {
       const residents = residentsFor(r.id);
       const names = residents.map((s) => s.name).join(", ") || "—";
       return `
       <tr>
+        <td>${index + 1}</td>
         <td>${r.floor}</td>
         <td class="name-cell mono">${r.room_number}</td>
         <td>${r.room_type}-Sharing</td>

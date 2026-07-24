@@ -77,8 +77,9 @@ function renderTable() {
   // <td class="num">${formatINR(p.bike_charge)}</td>
   tbody.innerHTML = rows
     .map(
-      (p) => `
+      (p,index) => `
     <tr data-row-id="${p.id}">
+      <td class="mono">${index + 1}</td>
       <td class="name-cell">${p.students?.name || "—"}</td>
       <td class="mono">${p.students?.rooms?.room_number || "—"}</td>
       <td class="num">${formatINR(p.room_rent)}</td>

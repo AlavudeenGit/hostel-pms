@@ -52,8 +52,9 @@ function renderWorkers() {
   emptyBox.innerHTML = "";
   tbody.innerHTML = rows
     .map(
-      (w) => `
+      (w, index) => `
     <tr>
+      <td class="name-cell">${index + 1}</td>
       <td class="name-cell">${w.name}</td>
       <td>${w.position}</td>
       <td class="mono">${w.mobile}</td>
@@ -102,7 +103,7 @@ function renderSalaries() {
   const tbody = qs("#salaries-tbody");
   const activeWorkers = workers.filter((w) => w.status === "active");
   tbody.innerHTML = activeWorkers
-    .map((w) => {
+    .map((w,index) => {
       const rec = salaries.find((s) => s.worker_id === w.id) || {
         worker_id: w.id,
         month_year: currentMonth,
@@ -117,6 +118,7 @@ function renderSalaries() {
       };
       return `
       <tr>
+        <td class="name-cell">${index + 1}</td>
         <td class="name-cell">${w.name}<div style="font-size:11px; color:var(--ink-faint); font-weight:400;">${w.position}</div></td>
         <td class="num">${formatINR(rec.base_salary)}</td>
         <td class="num">${formatINR(rec.overtime)}</td>
